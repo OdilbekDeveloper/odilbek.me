@@ -1,6 +1,7 @@
 """Each settings module loads, and production refuses to start insecurely."""
 
 import json
+import os
 
 import pytest
 from django.conf import settings
@@ -21,12 +22,16 @@ print(json.dumps({
     "first_hasher": s.PASSWORD_HASHERS[0],
     "staticfiles": s.STORAGES["staticfiles"]["BACKEND"],
     "session_domain": s.SESSION_COOKIE_DOMAIN,
+    "admin_enabled": s.ADMIN_ENABLED,
 }))
 """
 
 
 def test_suite_runs_on_test_settings_and_postgresql():
-    assert settings.SETTINGS_MODULE == "config.settings.test"
+    # The environment, not settings.SETTINGS_MODULE: under a settings override (every test has
+    # one, for media isolation) Django reports that attribute as None.
+    assert os.environ["DJANGO_SETTINGS_MODULE"] == "config.settings.test"
+    assert settings.SECRET_KEY == "test-only-not-a-secret"
     assert connection.vendor == "postgresql"
 
 
@@ -45,6 +50,8 @@ def test_production_settings_are_secure(run_with_settings, prod_env):
     assert prod["first_hasher"] == "django.contrib.auth.hashers.Argon2PasswordHasher"
     assert prod["staticfiles"] == "whitenoise.storage.CompressedManifestStaticFilesStorage"
     assert prod["session_domain"] is None
+    # No admin in production until Phase 5 puts it behind allauth with MFA.
+    assert prod["admin_enabled"] is False
 
 
 @pytest.mark.parametrize("missing", ["DJANGO_SECRET_KEY", "DJANGO_ALLOWED_HOSTS", "DATABASE_URL"])

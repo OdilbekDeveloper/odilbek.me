@@ -32,6 +32,10 @@ SECURE_HSTS_SECONDS = env.int("DJANGO_SECURE_HSTS_SECONDS", default=3600)
 SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool("DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS", default=True)
 SECURE_HSTS_PRELOAD = env.bool("DJANGO_SECURE_HSTS_PRELOAD", default=False)
 
+# The Django admin stays unmounted in production until Phase 5 puts it behind allauth with MFA
+# and rate limits. Until then its only login is Django's own, which has neither.
+ADMIN_ENABLED = env.bool("DJANGO_ADMIN_ENABLED", default=False)
+
 # security.W021 asks for HSTS preload. Preloading is hard to undo, so it is a deliberate last step
 # after launch, not a default.
 SILENCED_SYSTEM_CHECKS = ["security.W021"]

@@ -5,6 +5,7 @@ configuration comes from environment variables (docs/DEPLOYMENT.md lists them); 
 lives in this repository. A local .env is loaded by dev.py and test.py only (see _dotenv.py).
 """
 
+import re
 from pathlib import Path
 
 import environ
@@ -22,14 +23,22 @@ DEBUG = False
 # ---------------------------------------------------------------------------
 
 INSTALLED_APPS = [
+    # Must precede django.contrib.admin so translated fields are patched in before admin loads.
+    "modeltranslation",
+    "django.contrib.admin",
     "django.contrib.contenttypes",
     "django.contrib.auth",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # PostgreSQL-only project (D-005): list fields are native arrays (Profile.languages,
+    # LanguagePair.modes), which Django requires this app for.
+    "django.contrib.postgres",
     "django_tailwind_cli",
     "apps.core",
     "apps.accounts",
+    "apps.career",
+    "apps.profiles",
 ]
 
 MIDDLEWARE = [
@@ -131,6 +140,24 @@ LOCALE_PATHS = [BASE_DIR / "locale"]
 USE_I18N = True
 TIME_ZONE = "UTC"
 USE_TZ = True
+
+# Field-level translations (D-015): title_en / title_ko / title_uz columns. English is the default
+# and the fallback; it is the only language a record must have.
+MODELTRANSLATION_DEFAULT_LANGUAGE = "en"
+MODELTRANSLATION_LANGUAGES = tuple(code for code, _name in LANGUAGES)
+MODELTRANSLATION_FALLBACK_LANGUAGES = ("en",)
+
+# ---------------------------------------------------------------------------
+# Django admin: the temporary content editor until the dashboard (Phase 5)
+# ---------------------------------------------------------------------------
+
+# The admin's URL segment. Profile slugs can never take it (apps/core/slugs.py).
+ADMIN_URL = env("DJANGO_ADMIN_PATH", default="admin/")
+if not re.fullmatch(r"[a-z0-9][a-z0-9-]*/", ADMIN_URL):
+    raise ImproperlyConfigured(
+        "DJANGO_ADMIN_PATH must be a lowercase URL segment ending in '/', e.g. 'admin/'."
+    )
+ADMIN_ENABLED = env.bool("DJANGO_ADMIN_ENABLED", default=True)
 
 # ---------------------------------------------------------------------------
 # Static and media files

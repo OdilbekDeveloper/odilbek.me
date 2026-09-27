@@ -4,7 +4,7 @@ from django.conf import settings
 from django.urls import URLPattern, URLResolver, get_resolver
 from django.urls.resolvers import LocalePrefixPattern
 
-from apps.core.slugs import LANGUAGE_PREFIXES, RESERVED_SLUGS
+from apps.core.slugs import LANGUAGE_PREFIXES, RESERVED_SLUGS, admin_segment, is_reserved
 
 
 def top_level_segments(patterns):
@@ -28,3 +28,9 @@ def test_every_top_level_route_segment_is_reserved():
 
 def test_every_configured_language_prefix_is_reserved():
     assert {code for code, _ in settings.LANGUAGES} <= LANGUAGE_PREFIXES
+
+
+def test_whatever_admin_path_is_configured_is_reserved(settings):
+    assert is_reserved(admin_segment())
+    settings.ADMIN_URL = "back-office-7/"
+    assert is_reserved("back-office-7")

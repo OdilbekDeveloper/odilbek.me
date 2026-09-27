@@ -19,6 +19,11 @@ dependencies = [
     "django-tailwind-cli>=4.8.1",
     # Argon2id password hashing, the algorithm Django recommends.
     "argon2-cffi>=25.1.0",
+    # Field-level translations (title_en / title_ko / title_uz), D-015.
+    "django-modeltranslation>=0.20.6",
+    # Image validation, re-encoding (strips EXIF/GPS) and AVIF/WebP variants. Its own wheels
+    # encode both formats on Windows and Linux, so no separate AVIF plugin is needed (D-034).
+    "pillow>=12.3.0",
 ]
 
 [dependency-groups]

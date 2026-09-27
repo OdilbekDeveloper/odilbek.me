@@ -9,6 +9,13 @@ import pytest
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
+@pytest.fixture(autouse=True)
+def isolated_media(settings, tmp_path):
+    """Every test writes media to its own temporary folder, never to the project's media/."""
+    settings.MEDIA_ROOT = tmp_path / "media"
+    return settings.MEDIA_ROOT
+
+
 @pytest.fixture
 def run_with_settings():
     """Run Python code in a fresh interpreter under a chosen settings module and environment.
