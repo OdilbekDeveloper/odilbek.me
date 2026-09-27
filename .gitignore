@@ -1,0 +1,81 @@
+# ---------------------------------------------------------------------------
+# Secrets and environment. Only the placeholder template is ever committed.
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# ---------------------------------------------------------------------------
+# Personal content sources (CVs, photos, notes for the initial content draft).
+# This repository is public: these files are read locally and loaded into the
+# database, never committed. See docs/SECURITY.md, "Personal data".
+# ---------------------------------------------------------------------------
+content-import/
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+env/
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ---------------------------------------------------------------------------
+# Tooling caches and reports
+# ---------------------------------------------------------------------------
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+
+# ---------------------------------------------------------------------------
+# Django runtime output
+# ---------------------------------------------------------------------------
+*.log
+db.sqlite3
+db.sqlite3-journal
+/media/
+/staticfiles/
+local_settings.py
+
+# ---------------------------------------------------------------------------
+# Frontend build output
+# (Phase 1 adds the exact Tailwind output path once the pipeline exists.)
+# ---------------------------------------------------------------------------
+node_modules/
+
+# ---------------------------------------------------------------------------
+# Database dumps and local backups. Production backups live in private R2.
+# ---------------------------------------------------------------------------
+/backups/
+*.dump
+*.sql.gz
+
+# ---------------------------------------------------------------------------
+# Editors and operating systems
+# ---------------------------------------------------------------------------
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------------------------------------------------------------------------
+# Claude Code: personal, machine-local settings (shared settings may be
+# committed later as .claude/settings.json).
+# ---------------------------------------------------------------------------
+.claude/settings.local.json

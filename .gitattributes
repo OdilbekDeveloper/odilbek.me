@@ -1,0 +1,23 @@
+# Development happens on Windows, but everything runs on Linux (Docker, CI, Railway).
+# LF everywhere, in the repository and the working tree, so a script or Dockerfile edited
+# on Windows never reaches a container with CRLF line endings.
+* text=auto eol=lf
+
+# Windows-only scripts keep CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary assets: never normalized, never diffed as text.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.avif binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
