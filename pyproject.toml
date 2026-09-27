@@ -1,0 +1,55 @@
+[project]
+name = "odilbek-me"
+version = "0.1.0"
+description = "odilbek.me: a personal career platform built on Django."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "django>=6.1.1,<6.2",
+    # Binary wheels bundle libpq, so neither the image nor a Windows machine needs a compiler or
+    # libpq headers. The C build is only worth it at a load this site will not see.
+    "psycopg[binary]>=3.3.6",
+    # DATABASE_URL parsing and typed environment variables for settings.
+    "django-environ>=0.14.0",
+    "gunicorn>=26.2.0",
+    # Hashed, compressed static files served by Django itself: no nginx in the image.
+    "whitenoise>=6.12.0",
+    # Tailwind v4 through its standalone binary, so neither the image nor CI needs Node.
+    "django-tailwind-cli>=4.8.1",
+    # Argon2id password hashing, the algorithm Django recommends.
+    "argon2-cffi>=25.1.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-django>=4.14.0",
+    "ruff>=0.16.9",
+]
+
+[tool.uv]
+# A deployable application, not a library: nothing is built or installed as a package.
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+extend-exclude = [".django_tailwind_cli"]
+
+[tool.ruff.lint]
+# DJ adds the flake8-django rules (e.g. null=True on string fields, missing __str__).
+select = ["E", "F", "I", "UP", "B", "DJ"]
+
+[tool.ruff.lint.per-file-ignores]
+# Migrations are generated; their line lengths are Django's, not ours.
+"**/migrations/*.py" = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["apps", "config"]
+
+[tool.pytest.ini_options]
+# --ds on the command line outranks a DJANGO_SETTINGS_MODULE exported in the shell, so tests always
+# run with test settings.
+addopts = "--ds=config.settings.test --strict-markers --strict-config -ra"
+testpaths = ["tests"]

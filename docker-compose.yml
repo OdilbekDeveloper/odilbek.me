@@ -1,0 +1,48 @@
+# Local development.
+#
+#   docker compose up -d db              PostgreSQL only; Django runs natively with `uv run`.
+#   docker compose --profile full up     also the production image, for PDF work and for trying
+#                                        the real container locally (http://localhost:8000).
+#
+# The credentials below exist only on this machine's Docker network and a local port. They are
+# not secrets, and nothing in production uses them.
+
+services:
+  db:
+    # The same major version Railway provisions, so pg_dump/pg_restore and query behaviour match.
+    image: postgres:18
+    environment:
+      POSTGRES_DB: portfolio
+      POSTGRES_USER: portfolio
+      POSTGRES_PASSWORD: portfolio
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      # PostgreSQL 18 images keep versioned data under /var/lib/postgresql/<major>/, so the volume
+      # mounts one level up from the /var/lib/postgresql/data that older images used.
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U portfolio -d portfolio"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    profiles: ["full"]
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://portfolio:portfolio@db:5432/portfolio
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-compose-local-only}
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      # Plain HTTP on localhost; production keeps the redirect on.
+      DJANGO_SECURE_SSL_REDIRECT: "False"
+    command: >-
+      sh -c "python manage.py predeploy && exec gunicorn --config config/gunicorn.conf.py config.wsgi"
+    ports:
+      - "8000:8000"
+
+volumes:
+  pgdata:

@@ -1,7 +1,7 @@
 # DATA MODEL
 
-The planned schema. **No models or migrations exist yet**: they are built in Phase 2 (resumes in
-Phase 8, analytics in Phase 9, contact in Phase 7, blog in Phase 13). Changes to this document
+The planned schema. **Only `accounts.User` exists so far** (Phase 1). The rest is built in
+Phase 2, except contact (Phase 7), resumes (Phase 8), analytics (Phase 9) and blog (Phase 13). Changes to this document
 during implementation are logged in `DECISIONS.md`.
 
 ## Conventions
@@ -58,7 +58,8 @@ MediaAsset
 ## accounts
 
 ```
-User(AbstractUser)                 email unique
+User(AbstractUser)                 email required; unique regardless of case
+                                   (UniqueConstraint on Lower("email"))          ✅ Phase 1
 ```
 
 ## career: master data

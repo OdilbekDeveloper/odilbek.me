@@ -1,11 +1,11 @@
 # ROADMAP
 
 ```
-PHASE 0   Specification in repo                    ← CURRENT
+PHASE 0   Specification in repo                    ✅ done
     ↓
-PHASE 1   Foundation + walking skeleton
+PHASE 1   Foundation + walking skeleton            ✅ done · first Railway deploy awaits approval (D-032)
     ↓
-PHASE 2   Career data model + initial content
+PHASE 2   Career data model + initial content      ← NEXT
     ↓
 PHASE 3   Design system + public shell
     ↓
@@ -52,7 +52,7 @@ tracking is part of analytics ingestion, so they share a phase.
 
 ---
 
-## Phase 0: Specification in repo
+## Phase 0: Specification in repo ✅
 
 - **Objective:** the approved architecture becomes this repository's source of truth.
 - **Delivers:** `docs/*.md`, `CLAUDE.md`, `README.md`, `.gitignore`, `.gitattributes`, and git initialised.
@@ -60,28 +60,34 @@ tracking is part of analytics ingestion, so they share a phase.
   with the settings that read it).
 - **Done:** Odilbek has reviewed the docs; the diff has no secrets or personal data; committed.
 
-## Phase 1: Foundation and walking skeleton
+## Phase 1: Foundation and walking skeleton ✅
 
-- **Objective:** a production-shaped, empty application, deployed to a Railway URL (not the domain).
+- **Objective:** a production-shaped, empty application, ready to deploy to a Railway URL (not
+  the domain). The deployment itself waits for Odilbek's approval to create the paid project (D-032).
 - **Tasks:**
   - uv project with Django 6.1; verify the key packages work on 6.1 (fallback 6.0, logged)
   - settings split (`base/dev/test/prod`) driven by django-environ; `.env.example` with placeholders
   - **custom `User`** before the first migration; Argon2
   - PostgreSQL via `docker-compose.yml` for local development (no SQLite)
-  - WhiteNoise; Tailwind CLI pipeline; a minimal `base.html` placeholder page
+  - WhiteNoise; Tailwind CLI pipeline (source in `assets/`, D-030); a minimal `base.html` placeholder page
   - `/healthz/`; security settings baseline; CSP in report-only; 404/500 templates
   - `manage.py predeploy` (migrate + createcachetable)
-  - multi-stage, non-root Dockerfile including WeasyPrint system libraries and fonts; `railway.toml`
+  - multi-stage, non-root Dockerfile including WeasyPrint system libraries (fonts arrive with
+    Phase 3's self-hosted families, D-031); `railway.toml`
   - CI: ruff lint and format, `makemigrations --check`, `check --deploy`, pytest against a
-    Postgres service, gitleaks, pip-audit; Dependabot
-  - a Railway project with web + Postgres
+    Postgres service, a production-image boot and smoke test, gitleaks, pip-audit; Dependabot
+  - *gated (D-032):* a Railway project with web + Postgres
 - **Tests:**
-  - settings load in every environment
-  - `/healthz/` returns 200
-  - security headers are present
-  - `AUTH_USER_MODEL` is `accounts.User`
+  - settings load in every environment; production refuses to start without its required
+    variables or on a non-PostgreSQL database, and passes `check --deploy`
+  - `/healthz/` returns 200, and 503 without leaking why when the database is unreachable
+  - security headers are present; CSP is report-only and strict
+  - `AUTH_USER_MODEL` is `accounts.User`; emails are required and unique regardless of case
+  - every top-level route segment is a reserved slug
+  - 404 and 500 pages render; nothing is indexed before launch
 - **Done:** `docker compose up db` plus `uv run python manage.py runserver` shows the placeholder;
-  CI is green; the Railway URL serves over HTTPS.
+  CI is green, including the production image booting and serving over the proxy's HTTPS. The
+  first Railway deployment follows Odilbek's approval (D-032), any time before Phase 7.
 - **Depends on:** Phase 0.
 
 ## Phase 2: Career data model and initial content (2 sessions)

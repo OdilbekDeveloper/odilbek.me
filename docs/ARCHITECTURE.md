@@ -57,13 +57,24 @@ exists (D-004).
 **Dependency direction is one-way.** Nothing depends on `dashboard`. `career` must not import
 from `profiles` (see the open question on `Project.primary_profile` in `DATA_MODEL.md`).
 
-**Planned repository layout** (created from Phase 1; do not create early):
+**Repository layout.** This is what exists after Phase 1; later phases add to it and never create
+their parts early.
 
 ```
-config/settings/{base,dev,test,prod}.py   config/urls.py   config/wsgi.py
-apps/<app>/{models,selectors,services,views,urls,forms,admin,translation}.py
-templates/{base.html, components/, public/, dashboard/, resume/}
-static/{css/app.css, js/, vendor/, fonts/}   locale/{ko,uz}/
+config/
+  settings/base.py dev.py test.py prod.py   environment-driven; only dev and test read a .env
+  urls.py  wsgi.py  gunicorn.conf.py
+apps/
+  core/        views (healthz), middleware (Permissions-Policy), slugs (reserved), predeploy command
+  accounts/    User
+  <app>/{models,selectors,services,views,urls,forms,admin,translation}.py   (from Phase 2)
+templates/     base.html, placeholder.html, 404.html, 500.html; later components/, public/,
+               dashboard/, resume/
+assets/css/    app.css: the Tailwind source, outside static/ (D-030)
+static/        css/tailwind.css (generated, not committed); later js/, vendor/, fonts/
+locale/        ko/, uz/ (UI strings, from Phase 4)
+tests/         pytest suite, run against PostgreSQL
+Dockerfile  railway.toml  docker-compose.yml  pyproject.toml  uv.lock  .github/
 ```
 
 ## 4. Layering rules
@@ -86,8 +97,9 @@ static/{css/app.css, js/, vendor/, fonts/}   locale/{ko,uz}/
 
 - **Django templates** with Django 6 template partials (`{% partialdef %}`), so one template
   renders both a full page and its HTMX fragments.
-- **Tailwind v4** with CSS-first `@theme` tokens, built by the standalone CLI (D-010). **Never
-  build class names from database values.** Per-profile accents use `data-accent` and CSS variables.
+- **Tailwind v4** with CSS-first `@theme` tokens, built by the standalone CLI (D-010) from
+  `assets/css/app.css` into `static/css/tailwind.css` (D-030). **Never build class names from
+  database values.** Per-profile accents use `data-accent` and CSS variables.
 - **HTMX** for the dashboard and a few public interactions (project filters, contact form
   variants). Set `htmx.config.allowEval = false` and `includeIndicatorStyles = false`.
 - **Alpine.js, CSP build**, for small state (menus, tabs, bottom sheets), with components
@@ -258,6 +270,10 @@ A test fails when a top-level route exists that is not on this list.
 
 Each dependency needs a reason. Adding one that isn't listed needs a line of justification, and
 an entry in `DECISIONS.md` if it is architectural.
+
+Each phase adds only the packages it uses. Phase 1 has Django, psycopg, django-environ,
+gunicorn, whitenoise, django-tailwind-cli and argon2-cffi, plus pytest, pytest-django and ruff
+for development. The whole plan was verified to work together before locking (D-031).
 
 | Package | Why |
 |---|---|

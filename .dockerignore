@@ -1,0 +1,23 @@
+# The Dockerfile copies named paths only; this keeps everything else, above all secrets and
+# personal files, from ever being sent to the Docker daemon.
+
+.git
+.github
+.venv
+.env
+.env.*
+content-import
+media
+staticfiles
+static/css/tailwind.css
+.django_tailwind_cli
+**/__pycache__
+**/*.py[cod]
+.pytest_cache
+.ruff_cache
+.claude
+.idea
+.vscode
+docs
+tests
+docker-compose.yml

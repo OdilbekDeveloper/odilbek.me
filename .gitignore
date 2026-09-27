@@ -51,9 +51,11 @@ db.sqlite3-journal
 local_settings.py
 
 # ---------------------------------------------------------------------------
-# Frontend build output
-# (Phase 1 adds the exact Tailwind output path once the pipeline exists.)
+# Frontend build output. Tailwind's CSS is built locally and in the image, never committed;
+# the standalone Tailwind binary is downloaded on first use.
 # ---------------------------------------------------------------------------
+/static/css/tailwind.css
+.django_tailwind_cli/
 node_modules/
 
 # ---------------------------------------------------------------------------

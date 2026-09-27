@@ -1,0 +1,25 @@
+# Weekly update pull requests. Each one runs CI and is merged only after review.
+
+version: 2
+updates:
+  - package-ecosystem: uv
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      python-dependencies:
+        patterns: ["*"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+    ignore:
+      # Python and PostgreSQL major versions are decisions (docs/DECISIONS.md), not routine bumps.
+      - dependency-name: python
+        versions: [">=3.14"]

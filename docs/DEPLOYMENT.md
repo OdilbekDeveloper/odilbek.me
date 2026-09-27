@@ -1,8 +1,10 @@
 # DEPLOYMENT
 
-Hosting, environments, configuration and operations. **Nothing is deployed yet.** Phase 1 deploys
-a walking skeleton to a Railway URL; Phase 10 puts it on odilbek.me. Commands and names here are
-the plan; Phase 1 and Phase 10 make them real and update this document.
+Hosting, environments, configuration and operations. **Nothing is deployed yet.** Phase 1 built
+everything a deployment needs and CI boots the production image on every push. The first Railway
+deployment waits for Odilbek to approve creating the paid project (D-032), and Phase 10 puts the
+site on odilbek.me. Sections 1–4 describe what exists; later sections are the plan until their
+phase makes them real.
 
 ## 1. Topology
 
@@ -33,21 +35,44 @@ Visitor ─ HTTPS ─▶│ DNS · TLS Full (strict) · WAF · rate-limit rule �
 
 A staging environment (a second Railway environment) is optional and can be added after launch.
 
-## 3. Local development direction
+## 3. Local development
 
 - **Python 3.13 via `uv`**, with a project-local `.venv` (never a shared venv):
   ```
   uv sync
-  docker compose up -d db
-  uv run python manage.py migrate
-  uv run python manage.py runserver      # plus the Tailwind watcher (exact command set in Phase 1)
+  cp .env.example .env                           # set DJANGO_SECRET_KEY
+  docker compose up -d db                        # PostgreSQL 18
+  uv run python manage.py predeploy              # migrate + createcachetable
+  uv run python manage.py tailwind runserver     # runserver plus the Tailwind watcher
   ```
-- **PostgreSQL runs in Docker.** Its major version matches Railway's, because `pg_dump`/`pg_restore`
-  and query behaviour must match.
+- **Settings:** `manage.py` defaults to `config.settings.dev`; pytest always uses
+  `config.settings.test` (`--ds`); the Docker image sets `config.settings.prod`. Only dev and
+  test read `.env`. Production reads its real environment only.
+- **PostgreSQL 18 runs in Docker**, the major version Railway provisions, because
+  `pg_dump`/`pg_restore` and query behaviour must match. PostgreSQL 18 images store data under
+  `/var/lib/postgresql/18/`, so the compose volume mounts `/var/lib/postgresql`.
+- **Windows consoles** with a non-UTF-8 code page (e.g. Korean cp949) need `PYTHONUTF8=1`;
+  otherwise Python cannot decode the Tailwind binary's output.
+- **The production image locally:** `docker compose --profile full up --build` builds it, runs
+  `predeploy` and serves it at http://localhost:8000 (SSL redirect off, since there is no TLS
+  locally).
 - **PDF work runs in Docker** (the production image), because WeasyPrint's system libraries
   (Pango) are impractical to install natively on Windows. Everything else runs natively.
 - **External services are off by default:** `NullNotifier` replaces Telegram, and Turnstile uses
   its official test keys or is disabled in `dev` settings.
+
+## 3a. Continuous integration
+
+`.github/workflows/ci.yml` runs on every push and pull request. Its three jobs run in parallel:
+
+| Job | What it proves |
+|---|---|
+| Lint, checks and tests | ruff lint and format, no missing migrations, `check --deploy --fail-level WARNING` under production settings, and the full pytest suite on a PostgreSQL 18 service |
+| Production image | the Dockerfile builds; `predeploy` runs against PostgreSQL; the web process becomes healthy. The smoke test checks that plain-HTTP `/healthz/` is not redirected, other plain-HTTP pages are, HTTPS responses carry HSTS, the hashed stylesheet is served, and the process is uid 10001 and cannot write to the app |
+| Secrets and dependency audit | gitleaks over the full history, and pip-audit over `uv.lock` |
+
+Dependabot opens weekly update PRs for uv, GitHub Actions and the Docker base image. Python and
+PostgreSQL major versions are excluded, because those are decisions.
 
 ## 4. Railway
 
@@ -55,11 +80,16 @@ One new project, separate from all other projects.
 
 | Service | Details |
 |---|---|
-| **web** | Built from the repository `Dockerfile` (multi-stage, non-root). `gunicorn config.wsgi` bound to `$PORT`. **1 replica.** Healthcheck `/healthz/`. `preDeployCommand = python manage.py predeploy` (migrate + createcachetable): a failed migration stops the deploy and the previous version keeps serving |
+| **web** | Built from the repository `Dockerfile` (multi-stage; the app runs as uid 10001 and cannot modify its own code). gunicorn (`config/gunicorn.conf.py`) bound to `$PORT`. **1 replica.** Healthcheck `/healthz/`, which also checks the database and is exempt from the HTTPS redirect. `preDeployCommand = python manage.py predeploy` (migrate + createcachetable): a failed migration stops the deploy and the previous version keeps serving. All of this is in `railway.toml` |
 | **db** | Railway PostgreSQL. **Private networking only; no public TCP proxy.** `DATABASE_URL` is referenced from this service |
 | **cron** | Same image. Command `python manage.py maintenance`, schedule `*/10 * * * *`. Exits when done |
 
 `collectstatic` and the Tailwind build run at **image build time**, not at deploy.
+
+**Required web variables on Railway:** `DJANGO_SECRET_KEY` (long, random), `DATABASE_URL`
+(referenced from the db service), and `DJANGO_ALLOWED_HOSTS`. The allowed hosts must include the
+service's public domain **and `healthcheck.railway.app`**, the host Railway's health checks
+send; without it, every health check is answered 400 and the deploy never goes live.
 
 **Deploy flow:**
 1. A PR is merged to `main`, with CI green.
@@ -95,17 +125,24 @@ bucket only; the cron service's token can write the backup bucket only.
 
 ## 7. Environment variables (planned inventory)
 
-Names are **provisional**. Phase 1 creates `.env.example` with the ones it needs, and each later
-phase adds its own. Real values live only in Railway variables and a local, git-ignored `.env`.
+Phase 1 variables are final and in `.env.example`. Later names are **provisional**, and each
+phase adds its own there. Real values live only in Railway variables and a local, git-ignored `.env`.
 
 | Variable | Secret | Introduced | Purpose |
 |---|---|---|---|
-| `DJANGO_SETTINGS_MODULE` | | 1 | `config.settings.{dev,test,prod}` |
-| `DJANGO_SECRET_KEY` | ✔ | 1 | signing |
-| `DJANGO_DEBUG` | | 1 | dev only |
-| `DJANGO_ALLOWED_HOSTS` | | 1 | host allowlist |
-| `DJANGO_CSRF_TRUSTED_ORIGINS` | | 1 | explicit HTTPS origins |
-| `DATABASE_URL` | ✔ | 1 | PostgreSQL |
+| `DJANGO_SETTINGS_MODULE` | | 1 | set by the Docker image to `config.settings.prod`; `manage.py` defaults to dev |
+| `DJANGO_SECRET_KEY` | ✔ | 1 | signing; **required** in production, no default |
+| `DJANGO_ALLOWED_HOSTS` | | 1 | host allowlist; **required** in production, including `healthcheck.railway.app` (section 4) |
+| `DATABASE_URL` | ✔ | 1 | PostgreSQL only; **required** everywhere |
+| `DJANGO_CSRF_TRUSTED_ORIGINS` | | 1 | explicit HTTPS origins, e.g. `https://odilbek.me` |
+| `DJANGO_DEBUG` | | 1 | development only (default `True` there) |
+| `DJANGO_LOG_LEVEL` | | 1 | default `INFO` |
+| `DJANGO_CONN_MAX_AGE` | | 1 | persistent DB connections, default 60 s |
+| `DJANGO_SECURE_SSL_REDIRECT` | | 1 | default `True`; off only for the local production image |
+| `DJANGO_SECURE_HSTS_SECONDS` | | 1 | default 3600; raised to a year once the domain is stable |
+| `DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS` / `DJANGO_SECURE_HSTS_PRELOAD` | | 1 | defaults `True` / `False` |
+| `PORT`, `WEB_CONCURRENCY`, `GUNICORN_THREADS` | | 1 | gunicorn; Railway sets `PORT`. Defaults 8000 / 2 / 4 |
+| `POSTGRES_PORT` | | 1 | local only: the host port for the compose database |
 | `DJANGO_ADMIN_PATH` | | 2 | secret-ish admin URL segment |
 | `TELEGRAM_BOT_TOKEN` | ✔ | 7 | notifications |
 | `TELEGRAM_CHAT_ID` | | 7 | notification target |

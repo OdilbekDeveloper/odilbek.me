@@ -1,0 +1,13 @@
+/*
+ * Tailwind CSS v4 source. Built by `manage.py tailwind build` / `tailwind watch` into
+ * static/css/tailwind.css, which is generated and never committed.
+ *
+ * This file lives outside static/ on purpose (docs/DECISIONS.md, D-030).
+ *
+ * Automatic source detection is off; templates are scanned from explicitly named places only.
+ * Design tokens (colours, type, spacing) arrive with the design system in Phase 3.
+ */
+@import "tailwindcss" source(none);
+
+@source "../../templates";
+@source "../../apps";

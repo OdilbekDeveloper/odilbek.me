@@ -1,0 +1,183 @@
+# Continuous integration: the definition of done in CLAUDE.md, on every push and pull request.
+#
+# Three independent jobs:
+#   checks    lint, formatting, migrations, deploy checks and the test suite, on PostgreSQL 18
+#   image     builds the production image and boots it the way Railway runs it
+#   security  secret scan of the full history, and a vulnerability audit of the locked dependencies
+
+name: CI
+
+on:
+  push:
+  pull_request:
+
+# A newer push to the same ref supersedes a running one.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  UV_VERSION: "0.11.4"
+
+jobs:
+  checks:
+    name: Lint, checks and tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    services:
+      postgres:
+        # The major version Railway provisions (docs/DEPLOYMENT.md).
+        image: postgres:18
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: portfolio
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      # A throwaway database on the runner; pytest-django creates its own test database beside it.
+      DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/portfolio
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v10
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Lint
+        run: uv run ruff check .
+
+      - name: Formatting
+        run: uv run ruff format --check .
+
+      - name: No missing migrations
+        run: uv run python manage.py makemigrations --check --dry-run
+
+      - name: Deploy checks under production settings
+        run: |
+          DJANGO_SECRET_KEY="$(python3 -c 'import secrets; print(secrets.token_urlsafe(64))')" \
+          DJANGO_ALLOWED_HOSTS=example.com \
+            uv run python manage.py check --deploy --fail-level WARNING --settings=config.settings.prod
+
+      - name: Tests
+        run: uv run pytest
+
+  image:
+    name: Production image
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: portfolio
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: docker/setup-buildx-action@v4
+
+      - name: Build
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          load: true
+          push: false
+          tags: odilbek-me:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Pre-deploy, then start the web process
+        run: |
+          # Same environment shape as Railway: production settings, SSL redirect on. The key is
+          # generated for this run only.
+          cat > app.env <<EOF
+          DATABASE_URL=postgres://postgres:postgres@127.0.0.1:5432/portfolio
+          DJANGO_SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_urlsafe(64))')
+          DJANGO_ALLOWED_HOSTS=localhost
+          EOF
+          docker run --rm --network host --env-file app.env odilbek-me:ci python manage.py predeploy
+          docker run -d --name web --network host --env-file app.env odilbek-me:ci
+          for _ in $(seq 1 30); do
+            curl -fs -o /dev/null http://localhost:8000/healthz/ && exit 0
+            sleep 1
+          done
+          echo "The web process never became healthy." && exit 1
+
+      - name: Smoke test
+        run: |
+          set -euo pipefail
+          # The platform's health check arrives over plain HTTP and must not be redirected.
+          curl -fsS http://localhost:8000/healthz/ | grep -q '"ok"'
+          # Anything else over plain HTTP is redirected to HTTPS.
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8000/)" = 301
+          # Through the TLS-terminating proxy: served, with HSTS.
+          curl -fsS -D headers.txt -o home.html -H 'X-Forwarded-Proto: https' http://localhost:8000/
+          grep -qi '^strict-transport-security:' headers.txt
+          # The stylesheet was built into the image under a hashed name, and is served.
+          css=$(grep -o 'href="/static/css/tailwind\.[0-9a-f]*\.css"' home.html | cut -d'"' -f2)
+          test -n "$css"
+          curl -fsS -o /dev/null -H 'X-Forwarded-Proto: https' "http://localhost:8000$css"
+          # The process is unprivileged and cannot modify the application. (An explicit `if`, not
+          # `! cmd`: bash's errexit ignores negated commands, so that form could never fail.)
+          test "$(docker exec web id -u)" = 10001
+          if docker exec web touch /app/config/probe 2>/dev/null; then
+            echo "The application directory is writable by the web process." && exit 1
+          fi
+
+      - name: Container logs
+        if: always()
+        run: docker logs web 2>&1 || true
+
+  security:
+    name: Secrets and dependency audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: read
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # The secret scan reads the whole history, not only the latest commit.
+          fetch-depth: 0
+
+      - name: Secret scan
+        uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: astral-sh/setup-uv@v10
+        with:
+          version: ${{ env.UV_VERSION }}
+
+      - name: Vulnerability audit of the locked dependencies
+        run: |
+          uv export --frozen --format requirements-txt --no-emit-project -o requirements-audit.txt
+          uvx pip-audit==2.10.1 --disable-pip --strict -r requirements-audit.txt

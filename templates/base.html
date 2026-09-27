@@ -1,0 +1,16 @@
+{% load static i18n %}<!doctype html>
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% comment %}Nothing is indexed before launch (Phase 10). Pages opt in by overriding this block.{% endcomment %}
+  {% block robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+  <title>{% block title %}odilbek.me{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+  {% block head %}{% endblock %}
+</head>
+<body class="min-h-dvh bg-white text-neutral-900 antialiased dark:bg-neutral-950 dark:text-neutral-100">
+  {% block body %}{% endblock %}
+</body>
+</html>

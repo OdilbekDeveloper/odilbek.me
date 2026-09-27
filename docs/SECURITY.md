@@ -65,13 +65,18 @@ Upload rules:
 |---|---|
 | Database | Railway private networking only, with no public TCP proxy. Nightly `pg_dump` to a private R2 bucket with lifecycle retention. **Restore rehearsed** before launch |
 | Supply chain | Pinned `uv.lock`; Dependabot; `pip-audit` in CI; vendored JS pinned and self-hosted |
-| Operations | `DEBUG=False` in production; custom 404/500 pages; `check --deploy` gates CI; logs to stdout (Railway); optional Sentry via `SENTRY_DSN` |
+| Operations | `DEBUG=False` in production; custom 404/500 pages (the 500 page has no template logic, so it can't fail with the server); `check --deploy --fail-level WARNING` gates CI; logs to stdout (Railway); optional Sentry via `SENTRY_DSN` |
+| Container | Multi-stage image. The process runs as **uid 10001**; application code is root-owned and **not writable** by it; build tools (uv, the Tailwind binary) never reach the runtime image. CI asserts all of this on every push |
+| Health check | `/healthz/` answers only `{"status": ...}`; database errors go to the log, never to the caller |
 
 ## 3. Secrets
 
 - **All** configuration comes from environment variables (`DEPLOYMENT.md` lists them).
+  Production requires its secrets and has **no fallback values**: a missing variable stops the
+  process at startup.
 - `.env` and every `.env.*` except `.env.example` are git-ignored. `.env.example` contains
-  **placeholders only**.
+  **placeholders only**. Only the dev and test settings read a `.env` file; **production never
+  does**, so a stray file can't feed it values. `.dockerignore` keeps `.env*` out of image builds.
 - CI runs **gitleaks** on every push.
 - The dashboard shows whether an integration is configured, **never** its value.
 - Secrets never appear in logs, error messages, Telegram notifications, tests or fixtures.
@@ -103,7 +108,10 @@ These must exist and pass. Structural tests are written before the features they
 
 | Test | Phase |
 |---|---|
-| Security headers present; `check --deploy` clean under prod settings | 1 |
+| Security headers present; CSP strict (no `unsafe-eval`/`unsafe-inline`); `check --deploy` clean under prod settings | 1 ✅ |
+| Production refuses to start without its secrets or on a non-PostgreSQL database | 1 ✅ |
+| Every top-level route segment is a reserved profile slug | 1 ✅ |
+| The production image runs unprivileged and cannot modify its code (CI) | 1 ✅ |
 | `public()` hides unpublished/unlisted items for every public model | 2 |
 | Upload validation: oversize, wrong magic bytes, SVG, polyglot rejected; EXIF stripped | 2 |
 | Drafts never render publicly; preview is staff-only | 4 |

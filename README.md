@@ -8,8 +8,9 @@ career data, presented through several professional profiles, with generated res
 privacy-friendly analytics, campaign attribution, and a contact pipeline, all managed from a
 custom dashboard.
 
-> **Status: Phase 0, specification.** This repository currently contains the architecture and
-> roadmap only. No application code exists yet. See [`docs/ROADMAP.md`](docs/ROADMAP.md).
+> **Status: Phase 1, foundation.** A production-shaped Django skeleton: settings, PostgreSQL,
+> the custom user model, a health check, CI and the production image. The portfolio itself is
+> built from Phase 2 onward. See [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## What it does
 
@@ -59,24 +60,37 @@ resumes reference it through ordered links with per-view overrides. Details:
 
 Why each was chosen, and what was rejected: [`docs/DECISIONS.md`](docs/DECISIONS.md).
 
-## Local development (direction)
+## Local development
 
-The tooling arrives in Phase 1. The intended workflow is:
+Requirements: [uv](https://docs.astral.sh/uv/) and Docker. uv installs Python 3.13 if needed.
 
 ```
-uv sync                          # Python 3.13, project-local .venv
-docker compose up -d db          # PostgreSQL in Docker
-uv run python manage.py migrate
-uv run python manage.py runserver
+uv sync                                        # project-local .venv, locked dependencies
+cp .env.example .env                           # then set DJANGO_SECRET_KEY; never commit .env
+docker compose up -d db                        # PostgreSQL 18
+uv run python manage.py predeploy              # migrate + create the cache table
+uv run python manage.py tailwind runserver     # Django with the Tailwind watcher
 ```
 
-PDF generation runs inside Docker. Copy `.env.example` to `.env` for local settings. Never commit
-`.env`. See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
+On Windows with a non-UTF-8 console code page (e.g. Korean, cp949), set `PYTHONUTF8=1` first;
+otherwise the Tailwind watcher's output cannot be decoded.
+
+**Checks** (the definition of done; CI runs the same):
+
+```
+uv run pytest
+uv run ruff check .
+uv run ruff format --check .
+uv run python manage.py makemigrations --check --dry-run
+```
+
+**The production image locally:** `docker compose --profile full up --build` serves it at
+http://localhost:8000. See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
 ## Roadmap
 
 ```
-0 Specification ← current   1 Foundation   2 Data model + content   3 Design system
+0 Specification ✓   1 Foundation ✓   2 Data model + content ← next   3 Design system
 4 Public pages   5 Dashboard   6 Profile editor   7 Contact + Telegram   8 Resumes
 9 Analytics + campaigns   10 Launch (MVP)   11 Career map   12 Hardening   13 Blog   14 Polish
 ```
@@ -114,4 +128,16 @@ For contributors and Claude Code sessions alike:
 
 ## License
 
-No license has been chosen yet. Until one is added, all rights are reserved.
+The **software** in this repository (its source code, configuration and build files) is released
+under the [MIT License](LICENSE).
+
+The MIT License does **not** cover Odilbek Shavkatov's personal materials, whether they appear
+in this repository or on the website it serves:
+
+- biography and other personal text
+- career information, including CV/resume content
+- photographs
+- personal documents
+- personal branding and brand assets
+
+These remain all rights reserved unless a specific item is explicitly licensed otherwise.

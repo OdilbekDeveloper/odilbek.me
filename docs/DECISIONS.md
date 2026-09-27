@@ -296,3 +296,63 @@ Passwords are hashed with Argon2.
 **Decision:** The dashboard's own interface (labels, navigation, messages) is English. Content
 fields are editable in all three languages through language tabs.
 **Why:** The dashboard has one user; translating it would be cost with no benefit.
+
+---
+
+## Phase 1
+
+### D-029 · MIT for the software; personal materials excluded
+**Status:** Confirmed · 2026-09-27
+**Decision:** The software in this repository (source code, configuration, build files) is
+released under the MIT License (`LICENSE`). Odilbek's personal materials are **not** covered and
+remain all rights reserved unless an item is explicitly licensed otherwise. That covers biography,
+career information, CV/resume content, photographs, personal documents, and personal branding and
+brand assets, whether they appear in the repository or on the website.
+**Why:** The code is shared as evidence of competence; a person's identity and career record are
+not reusable material.
+**Consequences:** It supersedes the Phase 0 README line "no license chosen". Real career content
+still never enters the repository (D-002, D-026); the exclusion also covers anything on the website.
+
+### D-030 · The Tailwind source CSS lives outside `static/`
+**Status:** Accepted · 2026-09-27 · *Corrects `ARCHITECTURE.md`, which placed it at `static/css/app.css`.*
+**Decision:** The Tailwind source is `assets/css/app.css`. The build writes
+`static/css/tailwind.css`, which is generated and git-ignored.
+**Why:** Anything under `static/` is collected. The production manifest storage then rewrites the
+source file and fails on its `@import "tailwindcss";` (django-tailwind-cli warns about exactly
+this, as `W001`), so `collectstatic` breaks.
+**Consequences:** Source detection is explicit (`@source` for `templates/` and `apps/`), not
+automatic.
+
+### D-031 · The planned stack, verified before locking
+**Status:** Accepted · 2026-09-27
+**Decision:** Every package in the plan was installed together at its latest version in a scratch
+project on Python 3.13 + Django 6.1.1 and exercised, not just imported. **No version change was
+needed.** Each phase locks only the packages it uses.
+
+| Package | Verified | Notes |
+|---|---|---|
+| Django 6.1.1 on Python 3.13 | ✔ | Built-in CSP (`SECURE_CSP[_REPORT_ONLY]`); the nonce is lazy and appears only when a template uses it |
+| PostgreSQL 18 (Railway's current version) + psycopg 3.3 | ✔ | Local Docker and CI use the same major |
+| django-modeltranslation 0.20.6 | ✔ | columns, migrations, English fallback |
+| django-allauth 65.19.4 (account, MFA, Google) | ✔ | |
+| django-htmx 1.29, django-tailwind-cli 4.8.1 + Tailwind 4.3.3 | ✔ | Tailwind binary pinned, not "latest" |
+| whitenoise 6.12, django-environ 0.14, pytest-django 4.14 | ✔ | Metadata declares Django ≤ 6.0 / 5.2, but they work on 6.1 |
+| django-storages 1.14.6 (S3 API for R2) | ✔ | Metadata stale (last release Apr 2025); URL generation verified |
+| markdown-it-py 4.2 + nh3 0.3.7 | ✔ | Phase 4: render with raw HTML disabled (`html=False`), nh3 as the second layer |
+| WeasyPrint 70 on Debian 13 (`python:3.13-slim`) | ✔ | `libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0`; Hangul and `oʻ gʻ` embed and extract correctly with a CJK font |
+| django-ratelimit 4.1.0 | ✔ | Works on the DB cache, but **no release since July 2023**. Phase 7 decides: keep it, or a small in-house limiter on the cache |
+| argon2-cffi, httpx, Pillow, factory-boy | ✔ / import | factory-boy is exercised in Phase 2 |
+
+**Consequences:** The Phase 1 image installs WeasyPrint's system libraries now. The fonts are the
+self-hosted families chosen in Phase 3, not distribution fonts.
+
+### D-032 · The first Railway deployment waits for spending approval
+**Status:** Accepted · 2026-09-27 · *Amends Phase 1's definition of done in `ROADMAP.md`.*
+**Decision:** Phase 1 delivers everything needed to deploy (`Dockerfile`, `railway.toml`,
+`predeploy`, `/healthz/`, production settings). CI builds the production image, boots it the way
+Railway runs it, and smoke-tests it on every push. **Creating the Railway project**, which starts
+billing, happens only once Odilbek approves it.
+**Why:** Creating a paid service is Odilbek's spending decision (D-006), and nothing in Phases 2–6
+depends on a live deployment.
+**Consequences:** The deployment must happen before Phase 7, whose definition of done needs a real
+Telegram notification from the Railway deployment.

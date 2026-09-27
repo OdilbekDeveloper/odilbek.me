@@ -13,8 +13,10 @@ decision against that.
 
 ## Current phase
 
-> **PHASE 0 — Specification in repo.** Documentation and repository governance only.
-> No application code, dependencies, models, templates or deployments exist yet.
+> **PHASE 1 — Foundation + walking skeleton: complete, awaiting Odilbek's review.**
+> Settings, PostgreSQL, the custom User, `/healthz/`, the production image and CI exist; no
+> portfolio functionality does. The first Railway deployment waits for spending approval (D-032).
+> **Phase 2 starts only when Odilbek asks for it.**
 
 `docs/ROADMAP.md` defines the phases.
 
@@ -41,15 +43,22 @@ right; do not silently "fix" either.
 
 Now:
 ```
-CLAUDE.md  README.md  .gitignore  .gitattributes
-docs/      the specification (above)
+config/settings/  base, dev, test, prod (+ _dotenv: only dev/test read .env)
+config/           urls.py, wsgi.py, gunicorn.conf.py
+apps/core/        healthz view, Permissions-Policy middleware, reserved slugs, predeploy command
+apps/accounts/    User (email required, unique regardless of case)
+templates/        base, placeholder (until Phase 4), 404, 500 (self-contained)
+assets/css/       app.css: Tailwind source (outside static/, D-030)
+static/           css/tailwind.css is generated, never committed
+tests/            pytest, real PostgreSQL
+docs/             the specification (above)
+Dockerfile  railway.toml  docker-compose.yml  pyproject.toml  uv.lock  .github/  .env.example
 ```
 
 Planned (each part is created in its phase, **never earlier**):
 ```
-config/settings/{base,dev,test,prod}.py   env-driven settings                     Phase 1
-apps/core/        abstract models, SiteSettings, MediaAsset, markdown, slugs       Phase 1–2
-apps/accounts/    custom User, allauth adapters                                   Phase 1, 5
+apps/core/        abstract models, SiteSettings, MediaAsset, markdown                Phase 2
+apps/accounts/    allauth adapters                                                Phase 5
 apps/career/      master data: skills, projects, experience, education, …         Phase 2
 apps/profiles/    profiles, sections, profile↔item links, page assembly           Phase 2, 4
 apps/dashboard/   custom CMS: views, forms, templates — no models                 Phase 5–6
@@ -157,16 +166,17 @@ add a `DECISIONS.md` entry too.
 
 ## Definition of done
 
-**Phase 0:** docs reviewed by Odilbek, no secrets or personal data in the diff, committed.
-
-**From Phase 1 onward, every one of these must pass before a task is done:**
+**Every one of these must pass before a task is done** (CI runs the same, on PostgreSQL 18):
 ```
 uv run pytest
 uv run ruff check .
 uv run ruff format --check .
 uv run python manage.py makemigrations --check --dry-run
-uv run python manage.py check --deploy --settings=config.settings.prod   # needs prod-like env vars; enforced in CI
 ```
+
+`check --deploy --fail-level WARNING` under production settings is covered by
+`tests/test_settings.py` and runs again as its own CI step. CI also builds and boots the
+production image. A task is not done until CI is green.
 
 Also required:
 - UI changes are screenshot-reviewed (375 / 768 / 1280 px, light and dark, EN and KO)
@@ -186,12 +196,18 @@ Also required:
 Do not rewrite unrelated code. When a phase is merged, update "Current phase" here and the
 marker in `docs/ROADMAP.md`.
 
+Practical notes:
+- Local PostgreSQL: `docker compose up -d db`, then `uv run python manage.py predeploy`.
+- Run `uv run ruff format` on every new migration; Django writes them in a style ruff rejects.
+- On Windows with a non-UTF-8 console code page (e.g. cp949), set `PYTHONUTF8=1` for the
+  Tailwind commands. The tests already set it for their own subprocesses.
+
 ## Roadmap
 
 ```
-PHASE 0   Specification in repo                          ← CURRENT
-PHASE 1   Foundation + walking skeleton
-PHASE 2   Career data model + initial content
+PHASE 0   Specification in repo                          ✅
+PHASE 1   Foundation + walking skeleton                  ✅ (Railway deploy gated, D-032)
+PHASE 2   Career data model + initial content            ← NEXT
 PHASE 3   Design system + public shell
 PHASE 4   Public pages from data
 PHASE 5   Auth + dashboard core
