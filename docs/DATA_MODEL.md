@@ -2,7 +2,7 @@
 
 The schema. **core, career and profiles exist** (Phase 2, ✅), as does `accounts.User` (Phase 1).
 Contact (Phase 7), resumes (Phase 8), analytics (Phase 9) and blog (Phase 13) are still plans.
-Changes during implementation are logged in `DECISIONS.md` (Phase 2: D-033 to D-041).
+Changes during implementation are logged in `DECISIONS.md` (Phase 2: D-033 to D-042).
 
 ## Conventions
 
@@ -65,7 +65,8 @@ MediaAsset                         created only through apps/core/media.py (D-03
   variants (JSON)                  {"avif": {"480": path, ...}, "webp": {...}}; widths 480/960/1440/1920
                                    not exceeding the source; a narrower image keeps its own width
 
-ImportedRecord                     draft-import provenance: model_label, key, object_id (D-039)
+ImportedRecord                     import provenance: model_label, key, object_id,
+                                   origin (draft = draft_content | demo = seed_demo) (D-039, D-042)
 ```
 
 ## accounts ✅
@@ -229,7 +230,7 @@ own yet: MediaAsset `bytes ≥ 1` and the ProjectMedia pair.
 | every choice field | value in the enum (or blank where "not stated" is allowed) |
 | SiteSettings | a single row, id 1 |
 | MediaAsset | kind valid; sha256 is 64 hex; bytes ≥ 1; images have width and height (NULL-safe), PDFs none; English alt text for images; focal point in 0–1 |
-| ImportedRecord | unique `(model_label, key)` |
+| ImportedRecord | unique `(model_label, key)`; origin valid |
 | Project | summary required to publish |
 | ProjectMedia | unique `(project, asset)` |
 | Experience | start date required to publish |

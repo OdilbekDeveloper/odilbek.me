@@ -74,8 +74,9 @@ apps/
                predeploy command
   accounts/    User
   career/      models, selectors, admin, translation
-  profiles/    models, selectors, services, admin, translation; drafting.py and the
-               draft_content and seed_demo commands
+  profiles/    models, selectors, services, admin, translation; drafting.py (the content
+               importer) and draft_content; demo.py and demo_data/ (the fictional demo
+               dataset) and seed_demo
   <app>/{views,urls,forms}.py   public views from Phase 4
 templates/     base.html, placeholder.html, 404.html, 500.html; later components/, public/,
                dashboard/, resume/

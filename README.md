@@ -12,8 +12,8 @@ custom dashboard.
 > - career master data, and profiles with sections and ordered links, translated (EN/KO/UZ)
 > - the image pipeline, and publication rules enforced by the database
 > - a temporary Django admin
-> - fictional demo data (`seed_demo`) and the tooling that loads real content as unpublished
->   drafts (`draft_content`)
+> - a complete fictional demo dataset (`seed_demo`) that later phases build against
+> - the tooling that loads real content as unpublished drafts (`draft_content`)
 >
 > The real content has **not** been loaded yet: it waits for the private source material. There
 > are no public pages until Phases 3–4; the site still serves a placeholder. See
@@ -93,18 +93,26 @@ mounted in production before Phase 5 (`DJANGO_ADMIN_ENABLED`, see
 [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md)). Records are published only through its
 *Publish selected* action, which refuses anything that still contains a `TODO(odilbek)` marker.
 
-**Demo data** is fictional ("Alex Demo", `demo-` slugs). It lives in a **separate database**,
-because `seed_demo` refuses to touch one that holds real content:
+**Demo data** is a complete, entirely fictional career for "Alex Demo":
+- home, about, three role profiles and a draft one
+- eleven projects, in English and Korean
+- generated placeholder images
+
+It is loaded through the same importer as real content, and it lives in a **separate database**,
+because `seed_demo` refuses one that holds other career content:
 
 ```
 docker compose exec db createdb -U portfolio portfolio_demo
 export DATABASE_URL=postgres://portfolio:portfolio@localhost:5432/portfolio_demo
 uv run python manage.py predeploy
-uv run python manage.py seed_demo              # --reset removes it again
+uv run python manage.py seed_demo              # a re-run changes nothing
+uv run python manage.py seed_demo --reset      # removes every demo record, and nothing else
 ```
 
 (PowerShell: `$env:DATABASE_URL = "…"` instead of `export`.) A variable set in the shell wins
-over `.env`, so unset it again (or open a new shell) to return to the main database.
+over `.env`, so unset it again (or open a new shell) to return to the main database. Details,
+and what the dataset deliberately tests: [`docs/CONTENT_IMPORT.md`](docs/CONTENT_IMPORT.md),
+"Demo content".
 
 **Real content** is drafted from private sources into the git-ignored `content-import/` folder
 and loaded as **unpublished** drafts for review. It never enters git:

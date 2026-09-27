@@ -118,8 +118,15 @@ The repository is public (D-002). Therefore:
   being ignored, if anything under it is tracked, or if any image or document file is tracked
   (`tests/test_repository_hygiene.py`). The import refuses a source folder elsewhere inside the
   repository. See `CONTENT_IMPORT.md`.
-- **Demo data never mixes with real data**: `seed_demo` refuses a database holding real content.
-- **Test and demo data is obviously fictional** (e.g. "Example Project", `example.com`).
+- **Demo data never mixes with real data** (D-042):
+  - `seed_demo` refuses a database holding career content it did not create
+  - `draft_content` refuses a database holding the demo
+  - production settings refuse `seed_demo` altogether
+  - `seed_demo --reset` deletes only records whose provenance marks them as demo
+- **Test and demo data is fictional and marked as such:**
+  - the demo persona is "Alex Demo", and every organization in it is invented
+  - links and addresses use reserved `example.*` domains (a test enforces this for the demo)
+  - generated images are abstract and labelled "DEMO"; no photograph of anyone is used
 - **Before every commit, review the diff for:**
   - secrets and tokens
   - phone numbers, home addresses, dates of birth, personal email addresses
@@ -145,6 +152,7 @@ These must exist and pass. Structural tests are written before the features they
 | A record with a TODO marker cannot be published, even by a bulk update | 2 ✅ |
 | Publication is not editable in the admin; the admin is not mounted in production | 2 ✅ |
 | Nothing under `content-import/`, and no image or document, is tracked by git | 2 ✅ |
+| Demo and real content never share a database; production refuses demo content; demo data uses only reserved domains | 2 ✅ |
 | Drafts never render publicly; preview is staff-only | 4 |
 | Every dashboard URL refuses anonymous and non-staff users | 5 |
 | MFA enforced for staff in production settings | 5 |

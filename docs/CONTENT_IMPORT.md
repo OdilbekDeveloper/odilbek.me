@@ -116,3 +116,52 @@ required. Unknown fields are errors, so typos never pass silently.
 skill/project/education/service → description, experience → summary, language pair → note,
 profile → intro. A project without a summary or a profile without a headline gets a TODO in that
 field. A profile section whose text contains a TODO is imported disabled.
+
+`apps/profiles/demo_data/manifest.json` is a complete, working example of this format (below).
+
+## Demo content
+
+`manage.py seed_demo` loads a complete **fictional** career. It gives later phases a realistic site
+to design and test against before the real content exists (D-042).
+
+It is not true of anyone:
+- the persona is "Alex Demo", and every organization and figure is invented
+- every link and address uses a reserved `example.*` domain
+- the images are abstract shapes generated at run time and marked "DEMO"
+
+It is not a draft of Odilbek's content and never becomes one.
+
+It takes the same path as real content:
+
+1. **Import.** `apps/profiles/demo_data/manifest.json` is an ordinary schema-1 manifest. The
+   importer validates it, runs every image through the media pipeline, and creates the records
+   unpublished.
+2. **Review.** `review.json` does what a reviewer would then do in the admin:
+   - per-profile wording
+   - project galleries
+   - SEO text
+   - availability
+   - publishing, except six records kept as unpublished drafts to exercise the visibility rules
+3. **Provenance.** Every record it creates is listed under *Imported records* with origin `demo`.
+
+`demo_data/brief.md` describes the universe:
+- the timeline
+- which project appears on which profile
+- the deliberate test cases: hidden records, English fallback, layout stress and media edge cases
+
+| Command | Effect |
+|---|---|
+| `seed_demo` | load the dataset. A re-run changes nothing and keeps edits made in the admin |
+| `seed_demo --reset` | delete every record marked `demo`, its files and its provenance; nothing else |
+| `seed_demo --reset`, then `seed_demo` | start again from the files, e.g. after they change |
+
+Rules:
+- **Never with real content.** `seed_demo` refuses a database holding content it did not create
+  (any project, skill, profile, media asset or other career record, filled-in site settings, or
+  real drafts), and `draft_content` refuses a database holding the demo. The demo lives in its own database
+  (`README.md`, "Demo data").
+- **Never in production.** Only the development and test settings allow seeding
+  (`DEMO_CONTENT_ALLOWED`).
+- **Real content does not overwrite it.** Real drafts are imported into the main database with
+  `draft_content`. The demo database remains for development and tests, and can be reset or
+  dropped at any time.

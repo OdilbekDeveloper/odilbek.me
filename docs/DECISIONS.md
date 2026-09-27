@@ -458,7 +458,7 @@ import are never recreated. The format is in `docs/CONTENT_IMPORT.md`.
 invent structure the sources don't state.
 
 ### D-040 · Demo content is fictional and never mixes with real content
-**Status:** Accepted · 2026-09-27
+**Status:** Accepted · 2026-09-27 · *Superseded by D-042.*
 **Decision:** `manage.py seed_demo` creates an obviously fictional site ("Alex Demo", `demo-`
 slugs, `@example.com`), published through the publish service, and removes it with `--reset`. It
 refuses to run on a database holding any real content; demo work uses a separate database.
@@ -473,3 +473,29 @@ fictional data in one reviewable file. A factory library would add a dependency 
 code.
 **Consequences:** factory-boy stays in the planned list (`ARCHITECTURE.md` §13) and is added only
 if a later phase's tests need it, with a line of justification.
+
+### D-042 · The demo dataset goes through the importer and is tracked by provenance
+**Status:** Accepted · 2026-09-27 · *Supersedes D-040.*
+**Decision:** `seed_demo` loads a complete fictional career ("Alex Demo") from
+`apps/profiles/demo_data/`:
+- a schema-1 manifest, run through the same importer as real drafts
+- then a review step: per-profile wording, galleries, SEO, availability, and publishing everything
+  except six records kept as drafts
+
+`ImportedRecord.origin` (`draft` or `demo`) marks every record it creates, and
+`seed_demo --reset` deletes exactly those. Slugs are realistic (`developer`, `translator`,
+`ai-automation`) rather than prefixed with `demo-`.
+**Why:**
+- Phases 3 and 4 need varied, realistic content to design and test against before the real
+  content exists: long titles, Korean text, hidden records, galleries, overrides.
+- Loading through the importer exercises the same validation, media pipeline and provenance as
+  real content. The manifest also serves as a complete example of the format.
+- Provenance, not a naming convention, identifies demo records. The data can look real and still
+  be removed exactly.
+**Consequences:**
+- **Demo and real content never share a database.** `seed_demo` refuses a database holding
+  career content it did not create, and `draft_content` refuses one holding the demo.
+- **Never on the real site.** Only the development and test settings allow seeding
+  (`DEMO_CONTENT_ALLOWED`).
+- **The importer processes each image once**, and skips images it has already imported.
+- **A re-run changes nothing.** To pick up changes to the files, reset and seed again.

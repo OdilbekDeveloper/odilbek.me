@@ -5,7 +5,7 @@ PHASE 0   Specification in repo                    ✅ done
     ↓
 PHASE 1   Foundation + walking skeleton            ✅ done · first Railway deploy awaits approval (D-032)
     ↓
-PHASE 2   Career data model + initial content      ← CURRENT · built; real content awaits source material
+PHASE 2   Career data model + initial content      ← CURRENT · built, demo dataset ✅; real content awaits source material
     ↓
 PHASE 3   Design system + public shell
     ↓
@@ -96,19 +96,24 @@ tracking is part of analytics ingestion, so they share a phase.
   with Odilbek's real content drafted.
 - **Status:** in progress, on branch `phase-2/career-data`.
   - **Session A:** done.
+  - **Demo dataset:** done. `seed_demo` loads a complete fictional career through the same
+    importer (D-042), so Phases 3–4 have realistic content to build against.
   - **Session B:** the tooling is done, but the drafting has not started. It waits for
     Odilbek's private source material:
     - CVs (EN, and KO if one exists)
     - 2–4 portraits, at least one formal
     - the list of projects to include, where their READMEs are, and which may be public
-  - **The definition of done below is therefore not met yet.**
+  - **The definition of done below is therefore not met yet.** It asks for Odilbek's real
+    data as reviewed drafts. The demo dataset is fictional by design and cannot stand in for it.
+    Everything else in this phase is complete.
 - **Session A: models** ✅
   - models and constraints from `DATA_MODEL.md`; `QuerySet.public()` on every public model
   - modeltranslation registration
   - `MediaAsset` validation and re-encoding, focal point, and AVIF/WebP variants on upload
     (MVP work because of the hero photo, D-023, D-034)
   - Django admin with `TranslationAdmin` as the temporary content editor (D-038)
-  - `manage.py seed_demo` with **obviously fake** data for development and tests (D-040)
+  - `manage.py seed_demo` with **fictional** data for development and tests (D-040): now a
+    complete demo dataset loaded through the importer, removable by provenance (D-042)
   - resolve the open questions in `DATA_MODEL.md` (D-033, D-037)
 - **Session B: content drafting**
   - Odilbek puts CVs and portraits in `content-import/` (git-ignored)
@@ -126,6 +131,8 @@ tracking is part of analytics ingestion, so they share a phase.
   - variants are generated at the right widths and never upscaled
   - translation fallback
   - `draft_content` creates only unpublished rows
+  - the demo dataset: complete, repeatable, removable by provenance, and never mixed with real
+    content (`tests/test_seed_demo.py`)
 - **Done:** real data sits in the local database as reviewed drafts; migrations are clean.
 - **Depends on:** Phase 1.
 

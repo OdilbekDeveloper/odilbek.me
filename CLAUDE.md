@@ -16,8 +16,10 @@ decision against that.
 > **PHASE 2 — Career data model + initial content: in progress** (branch `phase-2/career-data`,
 > stacked on the accepted but not yet merged `phase-1/foundation`).
 > - **Session A is done:** models and database constraints, translations, the media pipeline,
->   publication rules, the temporary admin, and `seed_demo`.
+>   publication rules, and the temporary admin.
 > - **Session B's tooling is done:** `draft_content` and its manifest format.
+> - **The fictional demo dataset is done** (`seed_demo`, D-042). It is what Phases 3–4 build and
+>   test against. It is not Odilbek's content and never stands in for it.
 > - **Odilbek's real content is not loaded.** It waits for the private source material: CVs,
 >   portraits, and the list of projects to include. Nothing may be invented in its place.
 >
@@ -60,7 +62,8 @@ apps/accounts/    User (email required, unique regardless of case)
 apps/career/      master data: skills, projects, experience, education, services, language
                   pairs, contact channels; selectors, admin, translation
 apps/profiles/    profiles, sections, profile↔item link tables; selectors, services, admin,
-                  translation; drafting.py + commands draft_content, seed_demo
+                  translation; drafting.py (the importer) + draft_content;
+                  demo.py + demo_data/ (the fictional dataset) + seed_demo
 templates/        base, placeholder (until Phase 4), 404, 500 (self-contained)
 assets/css/       app.css: Tailwind source (outside static/, D-030)
 static/           css/tailwind.css is generated, never committed
@@ -215,8 +218,10 @@ Practical notes:
 - Local PostgreSQL: `docker compose up -d db`, then `uv run python manage.py predeploy`.
 - Run `uv run ruff format` and `uv run ruff check --fix` on every new migration; Django writes
   them in a style ruff rejects (formatting and import order).
-- `seed_demo` refuses a database holding real content: run it against a separate database
-  (`README.md`, "Demo data").
+- `seed_demo` loads the fictional dataset in `apps/profiles/demo_data/` into a separate database
+  (`README.md`, "Demo data"). It refuses a database holding other career content and refuses to
+  run under production settings; `seed_demo --reset` removes exactly what it created. Keep the
+  dataset fictional, consistent with `demo_data/brief.md`, and on `example.*` domains.
 - `content-import/` holds private material. Read it locally and load it only through
   `draft_content` (`docs/CONTENT_IMPORT.md`). Never copy anything from it into the repository.
 - On Windows with a non-UTF-8 console code page (e.g. cp949), set `PYTHONUTF8=1` for the
@@ -227,7 +232,7 @@ Practical notes:
 ```
 PHASE 0   Specification in repo                          ✅
 PHASE 1   Foundation + walking skeleton                  ✅ (Railway deploy gated, D-032)
-PHASE 2   Career data model + initial content            ← CURRENT (real content awaits sources)
+PHASE 2   Career data model + initial content            ← CURRENT (demo ✅; real content awaits sources)
 PHASE 3   Design system + public shell
 PHASE 4   Public pages from data
 PHASE 5   Auth + dashboard core

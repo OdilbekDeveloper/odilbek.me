@@ -54,10 +54,12 @@ a redeploy anyway. R2 arrives with Phase 10, together with `media.odilbek.me`.
 - **The temporary admin** (until Phase 5): `uv run python manage.py createsuperuser`, then
   http://localhost:8000/admin/. It is mounted because `DJANGO_ADMIN_ENABLED` defaults to `True` in
   development.
-- **Demo data** goes in a separate database, because `seed_demo` refuses one that holds real
-  content: `docker compose exec db createdb -U portfolio portfolio_demo`, then run `predeploy`
-  and `seed_demo` with `DATABASE_URL` pointing at it. A variable set in the shell wins over `.env`.
-  `seed_demo --reset` removes the demo content.
+- **Demo data** (a complete fictional dataset, `CONTENT_IMPORT.md`, "Demo content") goes in a
+  separate database, because `seed_demo` refuses one that holds other career content:
+  `docker compose exec db createdb -U portfolio portfolio_demo`, then run `predeploy` and
+  `seed_demo` with `DATABASE_URL` pointing at it. A variable set in the shell wins over `.env`.
+  `seed_demo --reset` removes exactly the demo records and their files. Production settings
+  refuse `seed_demo` (`DEMO_CONTENT_ALLOWED` is off there; it is a setting, not a variable).
 - **Real content** is loaded locally with `draft_content` from the git-ignored `content-import/`
   folder, as unpublished drafts (`CONTENT_IMPORT.md`). It reaches production only once the
   dashboard (Phase 5) and R2 (Phase 10) exist. How it gets there is decided then.
