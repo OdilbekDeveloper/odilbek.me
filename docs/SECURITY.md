@@ -71,7 +71,17 @@ Upload rules (implemented in `apps/core/media.py`, D-034):
   JavaScript, launch actions and embedded files.
 - Random, server-chosen filenames (the uploaded name is never used); files served from a
   **separate origin** (`media.odilbek.me`, Phase 10). Deleting an asset deletes its files.
-- Every rule has a synthetic hostile fixture in `tests/test_media.py`.
+- `tests/test_media.py` attacks these rules with synthetic hostile files:
+  - a disallowed extension, SVG, wrong magic bytes, an extension or content type that disagrees
+    with the content, and an oversize file
+  - a script appended to an image, HTML disguised as a PNG, a ZIP/JPEG polyglot, and a PNG with
+    trailing data
+  - a truncated image, a decompression bomb, and an animated image
+  - a PDF with JavaScript, and an incomplete PDF
+
+  The remaining checks run on every upload but have no hostile fixture of their own yet: a WebP
+  or AVIF whose structure does not cover the file, a JPEG trailed by an executable, an image
+  embedding a PDF, and PDF launch actions or embedded files.
 
 **Data and operations**
 

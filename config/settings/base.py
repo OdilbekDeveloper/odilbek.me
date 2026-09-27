@@ -198,7 +198,8 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SAMESITE = "Lax"
 
-# Plain form posts only; files have their own limits when uploads arrive in Phase 2.
+# Plain form fields only: uploaded files don't count toward it. The media pipeline enforces its
+# own file limits (apps/core/media.py: images ≤ 10 MB, PDFs ≤ 5 MB).
 DATA_UPLOAD_MAX_MEMORY_SIZE = 2 * 1024 * 1024
 
 # Features this site never uses, switched off for every page and any embedded frame.

@@ -4,7 +4,8 @@ Hosting, environments, configuration and operations. **Nothing is deployed yet.*
 everything a deployment needs and CI boots the production image on every push. The first Railway
 deployment waits for Odilbek to approve creating the paid project (D-032), and Phase 10 puts the
 site on odilbek.me. Sections 1–4 describe what exists; later sections are the plan until their
-phase makes them real.
+phase makes them real. Phase 2 added no infrastructure. Its only deployment-relevant changes are
+the admin variables (section 7) and local media storage (section 2).
 
 ## 1. Topology
 
@@ -29,11 +30,16 @@ Visitor ─ HTTPS ─▶│ DNS · TLS Full (strict) · WAF · rate-limit rule �
 
 | Environment | Where | Database | Media | Settings module |
 |---|---|---|---|---|
-| Local | Windows host, Django native via `uv` | Postgres in Docker | local filesystem | `config.settings.dev` |
-| Test / CI | GitHub Actions (Ubuntu) | Postgres service container | local temp dir | `config.settings.test` |
-| Production | Railway | Railway Postgres | R2 | `config.settings.prod` |
+| Local | Windows host, Django native via `uv` | Postgres in Docker | local filesystem (`media/`, git-ignored) | `config.settings.dev` |
+| Test / CI | GitHub Actions (Ubuntu) | Postgres service container | a temporary folder per test | `config.settings.test` |
+| Production | Railway | Railway Postgres | R2 (Phase 10) | `config.settings.prod` |
 
 A staging environment (a second Railway environment) is optional and can be added after launch.
+
+**Media before Phase 10.** Uploads go to `MEDIA_ROOT` on the local filesystem, and development
+serves them at `/media/` (only with `DEBUG` on). Production has no media storage yet. Its only
+upload path, the admin, is not mounted there, and the container's filesystem would not survive
+a redeploy anyway. R2 arrives with Phase 10, together with `media.odilbek.me`.
 
 ## 3. Local development
 
@@ -45,6 +51,16 @@ A staging environment (a second Railway environment) is optional and can be adde
   uv run python manage.py predeploy              # migrate + createcachetable
   uv run python manage.py tailwind runserver     # runserver plus the Tailwind watcher
   ```
+- **The temporary admin** (until Phase 5): `uv run python manage.py createsuperuser`, then
+  http://localhost:8000/admin/. It is mounted because `DJANGO_ADMIN_ENABLED` defaults to `True` in
+  development.
+- **Demo data** goes in a separate database, because `seed_demo` refuses one that holds real
+  content: `docker compose exec db createdb -U portfolio portfolio_demo`, then run `predeploy`
+  and `seed_demo` with `DATABASE_URL` pointing at it. A variable set in the shell wins over `.env`.
+  `seed_demo --reset` removes the demo content.
+- **Real content** is loaded locally with `draft_content` from the git-ignored `content-import/`
+  folder, as unpublished drafts (`CONTENT_IMPORT.md`). It reaches production only once the
+  dashboard (Phase 5) and R2 (Phase 10) exist. How it gets there is decided then.
 - **Settings:** `manage.py` defaults to `config.settings.dev`; pytest always uses
   `config.settings.test` (`--ds`); the Docker image sets `config.settings.prod`. Only dev and
   test read `.env`. Production reads its real environment only.
@@ -68,7 +84,7 @@ A staging environment (a second Railway environment) is optional and can be adde
 | Job | What it proves |
 |---|---|
 | Lint, checks and tests | ruff lint and format, no missing migrations, `check --deploy --fail-level WARNING` under production settings, and the full pytest suite on a PostgreSQL 18 service |
-| Production image | the Dockerfile builds; `predeploy` runs against PostgreSQL; the web process becomes healthy. The smoke test checks that plain-HTTP `/healthz/` is not redirected, other plain-HTTP pages are, HTTPS responses carry HSTS, the hashed stylesheet is served, and the process is uid 10001 and cannot write to the app |
+| Production image | the Dockerfile builds; `predeploy` runs against PostgreSQL; the web process becomes healthy. The smoke test checks that plain-HTTP `/healthz/` is not redirected, other plain-HTTP pages are, HTTPS responses carry HSTS, the hashed stylesheet is served, the image's Pillow can encode AVIF and WebP with LittleCMS (D-034), and the process is uid 10001 and cannot write to the app |
 | Secrets and dependency audit | gitleaks over the full history, and pip-audit over `uv.lock` |
 
 Dependabot opens weekly update PRs for uv, GitHub Actions and the Docker base image. Python and
@@ -125,8 +141,9 @@ bucket only; the cron service's token can write the backup bucket only.
 
 ## 7. Environment variables (planned inventory)
 
-Phase 1 variables are final and in `.env.example`. Later names are **provisional**, and each
-phase adds its own there. Real values live only in Railway variables and a local, git-ignored `.env`.
+Phase 1 and Phase 2 variables are final and in `.env.example`. Later names are **provisional**,
+and each phase adds its own there. Real values live only in Railway variables and a local,
+git-ignored `.env`.
 
 | Variable | Secret | Introduced | Purpose |
 |---|---|---|---|
@@ -143,7 +160,8 @@ phase adds its own there. Real values live only in Railway variables and a local
 | `DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS` / `DJANGO_SECURE_HSTS_PRELOAD` | | 1 | defaults `True` / `False` |
 | `PORT`, `WEB_CONCURRENCY`, `GUNICORN_THREADS` | | 1 | gunicorn; Railway sets `PORT`. Defaults 8000 / 2 / 4 |
 | `POSTGRES_PORT` | | 1 | local only: the host port for the compose database |
-| `DJANGO_ADMIN_PATH` | | 2 | secret-ish admin URL segment |
+| `DJANGO_ADMIN_PATH` | | 2 | the admin's URL segment: lowercase, ending in `/`, default `admin/`. Anything else stops startup. A profile slug can never take it |
+| `DJANGO_ADMIN_ENABLED` | | 2 | mounts the temporary admin. Default `True` in development and tests, **`False` in production**. Leave it off in production until Phase 5 puts the admin behind allauth with MFA (D-038) |
 | `TELEGRAM_BOT_TOKEN` | ✔ | 7 | notifications |
 | `TELEGRAM_CHAT_ID` | | 7 | notification target |
 | `TURNSTILE_SITE_KEY` | | 7 | public widget key |

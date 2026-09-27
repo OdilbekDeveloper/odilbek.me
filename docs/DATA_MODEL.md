@@ -2,7 +2,7 @@
 
 The schema. **core, career and profiles exist** (Phase 2, ✅), as does `accounts.User` (Phase 1).
 Contact (Phase 7), resumes (Phase 8), analytics (Phase 9) and blog (Phase 13) are still plans.
-Changes during implementation are logged in `DECISIONS.md` (Phase 2: D-033 to D-040).
+Changes during implementation are logged in `DECISIONS.md` (Phase 2: D-033 to D-041).
 
 ## Conventions
 
@@ -214,7 +214,10 @@ Posts are **not** field-translated: each post row is one language (D-015).
 
 ## Constraints
 
-**In the database** (names are the PostgreSQL constraint names' subjects; every one is tested):
+**In the database.** A rule shared by many models, such as the slug format, is built by shared
+code (`apps/core/constraints.py`) and tested on a representative model rather than on each table.
+The model-specific rules are tested directly, except two simple ones that have no test of their
+own yet: MediaAsset `bytes ≥ 1` and the ProjectMedia pair.
 
 | Model | Constraint |
 |---|---|
@@ -228,6 +231,7 @@ Posts are **not** field-translated: each post row is one language (D-015).
 | MediaAsset | kind valid; sha256 is 64 hex; bytes ≥ 1; images have width and height (NULL-safe), PDFs none; English alt text for images; focal point in 0–1 |
 | ImportedRecord | unique `(model_label, key)` |
 | Project | summary required to publish |
+| ProjectMedia | unique `(project, asset)` |
 | Experience | start date required to publish |
 | LanguagePair | `source ≠ target`; unique pair; modes non-empty and known |
 | ContactChannel | a URL or a handle |

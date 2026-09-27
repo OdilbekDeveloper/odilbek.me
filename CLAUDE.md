@@ -13,10 +13,16 @@ decision against that.
 
 ## Current phase
 
-> **PHASE 1 — Foundation + walking skeleton: complete, awaiting Odilbek's review.**
-> Settings, PostgreSQL, the custom User, `/healthz/`, the production image and CI exist; no
-> portfolio functionality does. The first Railway deployment waits for spending approval (D-032).
-> **Phase 2 starts only when Odilbek asks for it.**
+> **PHASE 2 — Career data model + initial content: in progress** (branch `phase-2/career-data`,
+> stacked on the accepted but not yet merged `phase-1/foundation`).
+> - **Session A is done:** models and database constraints, translations, the media pipeline,
+>   publication rules, the temporary admin, and `seed_demo`.
+> - **Session B's tooling is done:** `draft_content` and its manifest format.
+> - **Odilbek's real content is not loaded.** It waits for the private source material: CVs,
+>   portraits, and the list of projects to include. Nothing may be invented in its place.
+>
+> There are no public pages yet (Phase 4). The first Railway deployment waits for spending
+> approval (D-032). **Phase 3 starts only when Odilbek asks for it.**
 
 `docs/ROADMAP.md` defines the phases.
 
@@ -37,6 +43,7 @@ right; do not silently "fix" either.
 | `docs/SECURITY.md` | security controls, secrets, personal-data rules, required security tests |
 | `docs/ANALYTICS.md` | events, hashing, attribution, retention |
 | `docs/DEPLOYMENT.md` | environments, Railway, Cloudflare, R2, env vars, backups |
+| `docs/CONTENT_IMPORT.md` | drafting real content from private sources and loading it as unpublished records |
 | `docs/DECISIONS.md` | why things are the way they are. **Log any deviation here before implementing it** |
 
 ## Repository map
@@ -44,23 +51,31 @@ right; do not silently "fix" either.
 Now:
 ```
 config/settings/  base, dev, test, prod (+ _dotenv: only dev/test read .env)
-config/           urls.py, wsgi.py, gunicorn.conf.py
-apps/core/        healthz view, Permissions-Policy middleware, reserved slugs, predeploy command
+config/           urls.py (admin mounted only if DJANGO_ADMIN_ENABLED), wsgi.py, gunicorn.conf.py
+apps/core/        models: abstract bases, SiteSettings, MediaAsset, ImportedRecord
+                  media.py (the only upload path), constraints.py (CHECK builders),
+                  content.py (TODO markers), services.py (publish), selectors, signals, admin,
+                  translation, slugs (reserved), healthz, Permissions-Policy middleware, predeploy
 apps/accounts/    User (email required, unique regardless of case)
+apps/career/      master data: skills, projects, experience, education, services, language
+                  pairs, contact channels; selectors, admin, translation
+apps/profiles/    profiles, sections, profile↔item link tables; selectors, services, admin,
+                  translation; drafting.py + commands draft_content, seed_demo
 templates/        base, placeholder (until Phase 4), 404, 500 (self-contained)
 assets/css/       app.css: Tailwind source (outside static/, D-030)
 static/           css/tailwind.css is generated, never committed
-tests/            pytest, real PostgreSQL
+tests/            pytest, real PostgreSQL; helpers.py builds fictional records and synthetic files
 docs/             the specification (above)
 Dockerfile  railway.toml  docker-compose.yml  pyproject.toml  uv.lock  .github/  .env.example
 ```
 
 Planned (each part is created in its phase, **never earlier**):
 ```
-apps/core/        abstract models, SiteSettings, MediaAsset, markdown                Phase 2
+apps/core/        template tags, markdown renderer, SEO helpers                   Phase 3–4
+apps/core/        maintenance command                                             Phase 7
 apps/accounts/    allauth adapters                                                Phase 5
-apps/career/      master data: skills, projects, experience, education, …         Phase 2
-apps/profiles/    profiles, sections, profile↔item links, page assembly           Phase 2, 4
+apps/career/      public project and skill views                                  Phase 4
+apps/profiles/    page assembly, public profile views                             Phase 4
 apps/dashboard/   custom CMS: views, forms, templates — no models                 Phase 5–6
 apps/contact/     messages, spam checks, notifiers                                Phase 7
 apps/resumes/     curated resumes, files, PDF rendering                           Phase 8
@@ -198,7 +213,12 @@ marker in `docs/ROADMAP.md`.
 
 Practical notes:
 - Local PostgreSQL: `docker compose up -d db`, then `uv run python manage.py predeploy`.
-- Run `uv run ruff format` on every new migration; Django writes them in a style ruff rejects.
+- Run `uv run ruff format` and `uv run ruff check --fix` on every new migration; Django writes
+  them in a style ruff rejects (formatting and import order).
+- `seed_demo` refuses a database holding real content: run it against a separate database
+  (`README.md`, "Demo data").
+- `content-import/` holds private material. Read it locally and load it only through
+  `draft_content` (`docs/CONTENT_IMPORT.md`). Never copy anything from it into the repository.
 - On Windows with a non-UTF-8 console code page (e.g. cp949), set `PYTHONUTF8=1` for the
   Tailwind commands. The tests already set it for their own subprocesses.
 
@@ -207,7 +227,7 @@ Practical notes:
 ```
 PHASE 0   Specification in repo                          ✅
 PHASE 1   Foundation + walking skeleton                  ✅ (Railway deploy gated, D-032)
-PHASE 2   Career data model + initial content            ← NEXT
+PHASE 2   Career data model + initial content            ← CURRENT (real content awaits sources)
 PHASE 3   Design system + public shell
 PHASE 4   Public pages from data
 PHASE 5   Auth + dashboard core

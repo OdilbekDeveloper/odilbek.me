@@ -5,7 +5,7 @@ PHASE 0   Specification in repo                    ✅ done
     ↓
 PHASE 1   Foundation + walking skeleton            ✅ done · first Railway deploy awaits approval (D-032)
     ↓
-PHASE 2   Career data model + initial content      ← NEXT
+PHASE 2   Career data model + initial content      ← CURRENT · built; real content awaits source material
     ↓
 PHASE 3   Design system + public shell
     ↓
@@ -90,26 +90,36 @@ tracking is part of analytics ingestion, so they share a phase.
   first Railway deployment follows Odilbek's approval (D-032), any time before Phase 7.
 - **Depends on:** Phase 0.
 
-## Phase 2: Career data model and initial content (2 sessions)
+## Phase 2: Career data model and initial content (2 sessions) ← CURRENT
 
 - **Objective:** all master data, profile, section and link models, translated and administrable,
   with Odilbek's real content drafted.
-- **Session A: models**
+- **Status:** in progress, on branch `phase-2/career-data`.
+  - **Session A:** done.
+  - **Session B:** the tooling is done, but the drafting has not started. It waits for
+    Odilbek's private source material:
+    - CVs (EN, and KO if one exists)
+    - 2–4 portraits, at least one formal
+    - the list of projects to include, where their READMEs are, and which may be public
+  - **The definition of done below is therefore not met yet.**
+- **Session A: models** ✅
   - models and constraints from `DATA_MODEL.md`; `QuerySet.public()` on every public model
   - modeltranslation registration
   - `MediaAsset` validation and re-encoding, focal point, and AVIF/WebP variants on upload
-    (MVP work because of the hero photo, D-023)
-  - Django admin with `TranslationAdmin` as the temporary content editor
-  - `manage.py seed_demo` with **obviously fake** data for development and tests
-  - resolve the open questions in `DATA_MODEL.md`
+    (MVP work because of the hero photo, D-023, D-034)
+  - Django admin with `TranslationAdmin` as the temporary content editor (D-038)
+  - `manage.py seed_demo` with **obviously fake** data for development and tests (D-040)
+  - resolve the open questions in `DATA_MODEL.md` (D-033, D-037)
 - **Session B: content drafting**
   - Odilbek puts CVs and portraits in `content-import/` (git-ignored)
-  - Claude reads them, plus the READMEs of projects Odilbek names, and writes a one-off
-    `manage.py draft_content` that loads **unpublished** records into the local database
+  - Claude reads them, plus the READMEs of projects Odilbek names, and drafts a manifest
+    (`content-import/draft.json`) in which every record cites its source. `manage.py
+    draft_content` validates it and loads **unpublished** records into the local database
+    (D-039, `CONTENT_IMPORT.md`). The command and its tests are done ✅; the manifest is not.
   - missing facts become visible `TODO(odilbek):` placeholders; nothing is invented; no personal
     data reaches git
   - Odilbek reviews everything in admin
-- **Tests:**
+- **Tests** ✅ (all present and passing):
   - constraints: one home, reserved slugs, unique links, section type allowed per kind
   - `public()` hides unpublished and unlisted items correctly
   - upload validation rejects oversize files, wrong magic bytes, SVG and polyglots, and strips EXIF/GPS

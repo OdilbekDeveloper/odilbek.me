@@ -462,3 +462,14 @@ invent structure the sources don't state.
 **Decision:** `manage.py seed_demo` creates an obviously fictional site ("Alex Demo", `demo-`
 slugs, `@example.com`), published through the publish service, and removes it with `--reset`. It
 refuses to run on a database holding any real content; demo work uses a separate database.
+
+### D-041 · Test data comes from plain helper functions, not factory-boy
+**Status:** Accepted · 2026-09-27 · *Amends D-031's note that factory-boy would be exercised in
+Phase 2.*
+**Decision:** The Phase 2 tests build their fictional records and synthetic files with small
+functions in `tests/helpers.py`. factory-boy was not added.
+**Why:** The helpers are short, explicit about every field that matters to a test, and keep the
+fictional data in one reviewable file. A factory library would add a dependency without removing
+code.
+**Consequences:** factory-boy stays in the planned list (`ARCHITECTURE.md` §13) and is added only
+if a later phase's tests need it, with a line of justification.

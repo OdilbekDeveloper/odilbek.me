@@ -44,10 +44,10 @@ exists (D-004).
 
 | App | Owns | May depend on |
 |---|---|---|
-| `core` | abstract bases, `SiteSettings`, `MediaAsset` + image pipeline, Markdown renderer, reserved slugs, middleware, SEO helpers, template tags, `predeploy` / `maintenance` commands | — |
+| `core` | abstract bases, `SiteSettings`, `MediaAsset` + image pipeline, `ImportedRecord`, the publish service, Markdown renderer, reserved slugs, middleware, SEO helpers, template tags, `predeploy` / `maintenance` commands | — |
 | `accounts` | custom `User`, allauth adapters, MFA enforcement | core |
 | `career` | master data + public project/skill views | core |
-| `profiles` | `Profile`, `ProfileSection`, profile link tables, page assembly, career-graph builder, public profile views | core, career |
+| `profiles` | `Profile`, `ProfileSection`, profile link tables, page assembly, career-graph builder, public profile views; the draft-content import and demo data (`draft_content`, `seed_demo`), which write across `core`, `career` and `profiles` | core, career |
 | `resumes` | `Resume`, resume link tables, `ResumeFile`, rendering, PDF, public download | core, career, profiles |
 | `analytics` | `Event`, `DailySalt`, `Source`, `Campaign`, beacon ingest, attribution, reports | core, career, profiles, resumes |
 | `contact` | `ContactMessage`, form variants, spam checks, notifiers | core, profiles, analytics |
@@ -55,25 +55,35 @@ exists (D-004).
 | `dashboard` | the CMS: views, forms, templates. **No models** | everything |
 
 **Dependency direction is one-way.** Nothing depends on `dashboard`. `career` must not import
-from `profiles` (see the open question on `Project.primary_profile` in `DATA_MODEL.md`).
+from `profiles`, which is why a project's primary profile is a flag on its `ProfileProject` link
+row rather than a foreign key on `Project` (D-033).
 
-**Repository layout.** This is what exists after Phase 1; later phases add to it and never create
-their parts early.
+**Repository layout.** This is what exists after Phase 2's data layer; later phases add to it and
+never create their parts early.
 
 ```
 config/
   settings/base.py dev.py test.py prod.py   environment-driven; only dev and test read a .env
-  urls.py  wsgi.py  gunicorn.conf.py
+  urls.py        the admin is mounted only when DJANGO_ADMIN_ENABLED (section 6)
+  wsgi.py  gunicorn.conf.py
 apps/
-  core/        views (healthz), middleware (Permissions-Policy), slugs (reserved), predeploy command
+  core/        models (abstract bases, SiteSettings, MediaAsset, ImportedRecord)
+               media.py (the upload pipeline), constraints.py (database CHECK builders),
+               content.py (TODO markers), services.py (publish), selectors, signals, admin,
+               translation, slugs (reserved), views (healthz), middleware (Permissions-Policy),
+               predeploy command
   accounts/    User
-  <app>/{models,selectors,services,views,urls,forms,admin,translation}.py   (from Phase 2)
+  career/      models, selectors, admin, translation
+  profiles/    models, selectors, services, admin, translation; drafting.py and the
+               draft_content and seed_demo commands
+  <app>/{views,urls,forms}.py   public views from Phase 4
 templates/     base.html, placeholder.html, 404.html, 500.html; later components/, public/,
                dashboard/, resume/
 assets/css/    app.css: the Tailwind source, outside static/ (D-030)
 static/        css/tailwind.css (generated, not committed); later js/, vendor/, fonts/
 locale/        ko/, uz/ (UI strings, from Phase 4)
-tests/         pytest suite, run against PostgreSQL
+tests/         pytest suite, run against PostgreSQL; helpers.py makes fictional records and
+               synthetic files
 Dockerfile  railway.toml  docker-compose.yml  pyproject.toml  uv.lock  .github/
 ```
 
@@ -87,6 +97,14 @@ Dockerfile  railway.toml  docker-compose.yml  pyproject.toml  uv.lock  .github/
   because a developer forgot a filter.
 - **Writes go through `services.py`.** Examples: reordering, copying a profile's selection into
   a resume, generating a PDF, recording an event, notifying.
+- **Publishing is a service.** `apps.core.services.publish()` is the only way a record becomes
+  published. It refuses a record whose text, or the related text it displays, still contains a
+  `TODO(odilbek` marker. PostgreSQL independently refuses a published record whose own text
+  contains one, whatever the write path (D-035).
+- **Files become `MediaAsset`s only through `apps/core/media.py`**, which validates, re-encodes
+  and builds the variants (D-034; the rules are in `SECURITY.md`).
+- Phase 2 built the selectors and services of the data layer. No public view uses them yet
+  (Phase 4).
 - **Draft preview** is the only exception to `public()`. A selector accepts `include_drafts=True`,
   which a view may pass **only after** verifying a staff user and `?preview=1`. Such responses
   carry `Cache-Control: no-store`.
@@ -114,6 +132,14 @@ Dockerfile  railway.toml  docker-compose.yml  pyproject.toml  uv.lock  .github/
 
 - A custom `/dashboard/` for staff only (D-018). Django admin stays at a secret path
   (`DJANGO_ADMIN_PATH`) as a back-office; its login redirects to allauth.
+- **Until the dashboard exists (Phases 2–4),** the Django admin is the temporary content editor
+  (D-038):
+  - modeltranslation's plain `TranslationAdmin`, with the language fields side by side
+  - publishing through admin actions that call the publish service; `is_published` is read-only
+  - uploads through a form that calls the media pipeline
+  - mounted at `DJANGO_ADMIN_PATH` (default `admin/`) only when `DJANGO_ADMIN_ENABLED` is true:
+    the default in development and tests, but **not in production**, where the admin stays
+    unmounted until Phase 5 puts it behind allauth with MFA
 - **Plain class-based views** per entity (List/Create/Update/Delete) plus a few small mixins:
   `StaffRequired`, `HtmxPartial`, `Reorder`, `TogglePublish`. **This is not a generic CMS
   framework or page builder.**
@@ -133,7 +159,8 @@ Dockerfile  railway.toml  docker-compose.yml  pyproject.toml  uv.lock  .github/
 - **Languages:** `en` (default, **no URL prefix**), `ko` (`/ko/…`), `uz` (`/uz/…`, Latin), via
   `i18n_patterns(prefix_default_language=False)` (D-013, D-014).
 - **Content:** django-modeltranslation columns (`field_en/_ko/_uz`) with fallback to English.
-  Only `_en` is required (D-015).
+  Only `_en` is required (D-015), and the database enforces it wherever the field is required
+  (D-037).
 - **UI strings:** gettext `.po` files in `locale/`. The dashboard UI is English-only (D-028).
 - **Slugs are not translated.** URLs differ only by prefix, which keeps hreflang simple.
 - **Per-profile availability:** `Profile.languages` lists the languages a profile is published
@@ -273,7 +300,10 @@ an entry in `DECISIONS.md` if it is architectural.
 
 Each phase adds only the packages it uses. Phase 1 has Django, psycopg, django-environ,
 gunicorn, whitenoise, django-tailwind-cli and argon2-cffi, plus pytest, pytest-django and ruff
-for development. The whole plan was verified to work together before locking (D-031).
+for development. Phase 2 added django-modeltranslation and Pillow (D-034), and the
+`django.contrib.postgres` app for array fields (D-036). The whole plan was verified to work
+together before locking (D-031). Test data comes from plain functions in `tests/helpers.py`,
+so factory-boy has not been needed (D-041).
 
 | Package | Why |
 |---|---|

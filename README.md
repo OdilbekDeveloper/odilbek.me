@@ -8,9 +8,16 @@ career data, presented through several professional profiles, with generated res
 privacy-friendly analytics, campaign attribution, and a contact pipeline, all managed from a
 custom dashboard.
 
-> **Status: Phase 1, foundation.** A production-shaped Django skeleton: settings, PostgreSQL,
-> the custom user model, a health check, CI and the production image. The portfolio itself is
-> built from Phase 2 onward. See [`docs/ROADMAP.md`](docs/ROADMAP.md).
+> **Status: Phase 2, career data model: in progress.** The data layer exists:
+> - career master data, and profiles with sections and ordered links, translated (EN/KO/UZ)
+> - the image pipeline, and publication rules enforced by the database
+> - a temporary Django admin
+> - fictional demo data (`seed_demo`) and the tooling that loads real content as unpublished
+>   drafts (`draft_content`)
+>
+> The real content has **not** been loaded yet: it waits for the private source material. There
+> are no public pages until Phases 3–4; the site still serves a placeholder. See
+> [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## What it does
 
@@ -75,6 +82,40 @@ uv run python manage.py tailwind runserver     # Django with the Tailwind watche
 On Windows with a non-UTF-8 console code page (e.g. Korean, cp949), set `PYTHONUTF8=1` first;
 otherwise the Tailwind watcher's output cannot be decoded.
 
+**Entering content (temporary admin, until the Phase 5 dashboard):**
+
+```
+uv run python manage.py createsuperuser        # a local staff account
+```
+
+The admin is at http://localhost:8000/admin/ (the segment is `DJANGO_ADMIN_PATH`). It is never
+mounted in production before Phase 5 (`DJANGO_ADMIN_ENABLED`, see
+[`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md)). Records are published only through its
+*Publish selected* action, which refuses anything that still contains a `TODO(odilbek)` marker.
+
+**Demo data** is fictional ("Alex Demo", `demo-` slugs). It lives in a **separate database**,
+because `seed_demo` refuses to touch one that holds real content:
+
+```
+docker compose exec db createdb -U portfolio portfolio_demo
+export DATABASE_URL=postgres://portfolio:portfolio@localhost:5432/portfolio_demo
+uv run python manage.py predeploy
+uv run python manage.py seed_demo              # --reset removes it again
+```
+
+(PowerShell: `$env:DATABASE_URL = "…"` instead of `export`.) A variable set in the shell wins
+over `.env`, so unset it again (or open a new shell) to return to the main database.
+
+**Real content** is drafted from private sources into the git-ignored `content-import/` folder
+and loaded as **unpublished** drafts for review. It never enters git:
+
+```
+uv run python manage.py draft_content --dry-run    # validate the manifest, write nothing
+uv run python manage.py draft_content              # create the drafts
+```
+
+See [`docs/CONTENT_IMPORT.md`](docs/CONTENT_IMPORT.md).
+
 **Checks** (the definition of done; CI runs the same):
 
 ```
@@ -90,7 +131,7 @@ http://localhost:8000. See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 ## Roadmap
 
 ```
-0 Specification ✓   1 Foundation ✓   2 Data model + content ← next   3 Design system
+0 Specification ✓   1 Foundation ✓   2 Data model + content ← current   3 Design system
 4 Public pages   5 Dashboard   6 Profile editor   7 Contact + Telegram   8 Resumes
 9 Analytics + campaigns   10 Launch (MVP)   11 Career map   12 Hardening   13 Blog   14 Polish
 ```
@@ -124,6 +165,7 @@ For contributors and Claude Code sessions alike:
 | [SECURITY](docs/SECURITY.md) | controls, secrets, personal data, required tests |
 | [ANALYTICS](docs/ANALYTICS.md) | what is tracked, how, and for how long |
 | [DEPLOYMENT](docs/DEPLOYMENT.md) | environments, hosting, configuration, backups |
+| [CONTENT_IMPORT](docs/CONTENT_IMPORT.md) | how real content is drafted and loaded as unpublished records |
 | [DECISIONS](docs/DECISIONS.md) | decision log |
 
 ## License

@@ -48,7 +48,9 @@ uv run python manage.py draft_content              create the drafts
 uv run python manage.py draft_content --update     also refresh unpublished drafts from the manifest
 ```
 
-The report lists every record that still contains a TODO.
+`--root <folder>` reads the sources from another folder instead, which must be outside the
+repository, and `--manifest <name>` picks another file name. The report lists every record that
+still contains a TODO.
 
 ## Manifest format (schema 1)
 
