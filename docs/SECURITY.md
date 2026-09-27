@@ -64,7 +64,7 @@ Upload rules:
 | Area | Control |
 |---|---|
 | Database | Railway private networking only, with no public TCP proxy. Nightly `pg_dump` to a private R2 bucket with lifecycle retention. **Restore rehearsed** before launch |
-| Supply chain | Pinned `uv.lock`; Dependabot; `pip-audit` in CI; vendored JS pinned and self-hosted |
+| Supply chain | Pinned `uv.lock`; GitHub Actions pinned to full commit SHAs (a tag can be moved, a commit cannot); Dependabot for both; `pip-audit` in CI; vendored JS pinned and self-hosted |
 | Operations | `DEBUG=False` in production; custom 404/500 pages (the 500 page has no template logic, so it can't fail with the server); `check --deploy --fail-level WARNING` gates CI; logs to stdout (Railway); optional Sentry via `SENTRY_DSN` |
 | Container | Multi-stage image. The process runs as **uid 10001**; application code is root-owned and **not writable** by it; build tools (uv, the Tailwind binary) never reach the runtime image. CI asserts all of this on every push |
 | Health check | `/healthz/` answers only `{"status": ...}`; database errors go to the log, never to the caller |
