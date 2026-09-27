@@ -356,3 +356,109 @@ billing, happens only once Odilbek approves it.
 depends on a live deployment.
 **Consequences:** The deployment must happen before Phase 7, whose definition of done needs a real
 Telegram notification from the Railway deployment.
+
+---
+
+## Phase 2
+
+### D-033 · A project's primary profile lives on its link row
+**Status:** Accepted · 2026-09-27 · *Resolves `DATA_MODEL.md` open question 1.*
+**Decision:** `ProfileProject.is_primary` (at most one per project, enforced by a partial unique
+index) replaces the planned `Project.primary_profile` foreign key.
+**Why:** The foreign key would make `career` depend on `profiles`, breaking the one-way dependency
+rule. The link row also guarantees integrity: a project's primary profile always actually shows it.
+**Consequences:** `profiles.services.set_primary_profile(project, profile)` moves the flag.
+
+### D-034 · The media pipeline: Pillow alone, re-encode everything, AVIF and WebP variants
+**Status:** Accepted · 2026-09-27
+**Decision:** `apps/core/media.py` is the only way a file becomes a `MediaAsset`.
+- Size is checked before reading; the type comes from magic bytes; the extension must be
+  allowlisted and agree with them; the declared content type must not contradict them.
+- Images must contain no active content anywhere, and their container must end where the image
+  ends: a PNG with data after IEND, a JPEG trailed by an archive or executable, or a WebP or AVIF
+  whose structure doesn't cover the file exactly is rejected.
+- Pillow must fully decode the image, within 50 megapixels; animated images are refused.
+- The stored image is rebuilt from pixels alone after applying the EXIF orientation and converting
+  to sRGB, so no EXIF, GPS, XMP or ICC data survives.
+- Variants in AVIF and WebP at 480/960/1440/1920 px, never wider than the source; an image
+  narrower than 480 px gets one variant at its own width. Resized, never cropped, so the focal
+  point stays valid.
+- Stored names are random tokens; the uploaded name is never used. Deleting an asset deletes its
+  files, after commit.
+- PDFs (≤ 5 MB) are stored as uploaded after checking the header, the end marker and the absence
+  of scripts, launch actions and embedded files. They are staff-only uploads served from a separate
+  origin; deeper PDF handling is decided with resumes in Phase 8.
+- `sha256` is of the uploaded bytes: the same file uploaded twice is the same asset.
+**Why:** Pillow 12.3's own wheels encode AVIF and WebP and include LittleCMS on Windows and Linux,
+verified in the production image, so no separate AVIF plugin is needed.
+**Consequences:** Processing is synchronous (a staff action; no queue, D-022). A validation step
+(`prepare`) runs before anything is written, so the admin shows errors on the form.
+
+### D-035 · Publication integrity is enforced by the database and a single service
+**Status:** Accepted · 2026-09-27
+**Decision:** `is_published` is not editable in any form. Records are published only through
+`apps.core.services.publish()`, which the admin's actions call. PostgreSQL enforces:
+- a published record has `published_at`;
+- **a published record contains no `TODO(odilbek` marker** in any language of its own text
+  (case-insensitive), and an enabled profile section contains none either;
+- a project needs a summary, an experience entry a start date, and a profile a headline to be
+  published (a draft may lack them; an empty end date means "current", so a start is required).
+
+The service also refuses when related text the record displays still has a marker: link-row
+overrides, project image captions and alt text, the hero image, and the site settings.
+**Why:** The marker is how drafts flag facts the sources did not establish. A constraint holds for
+admin edits, bulk `QuerySet.update()` calls and the shell alike.
+
+### D-036 · List fields are PostgreSQL arrays
+**Status:** Accepted · 2026-09-27 · *Clarifies `DATA_MODEL.md` ("JSON list").*
+**Decision:** `Profile.languages` and `LanguagePair.modes` are `ArrayField`s of short strings, with
+`django.contrib.postgres` installed.
+**Why:** Typed, and constrained directly: `languages` must contain `en` and be a subset of the site
+languages; `modes` must be non-empty and known. The project is PostgreSQL-only (D-005).
+
+### D-037 · Phase 2 schema clarifications
+**Status:** Accepted · 2026-09-27
+- **At most one home and one about profile** are enforced by the database. That a home profile
+  *exists* is a content requirement: only a migration creating one could enforce it, and content
+  never goes in migrations.
+- **Reserved slugs apply to role profiles**, which live at the URL root; home and about have fixed
+  routes. The database checks the static list; `clean()` also checks the admin path configured for
+  the environment, which only the application knows.
+- **Section types** are the Phase 2 set; `career_map` (Phase 11) and `blog_posts` (Phase 13) are
+  added in their phases. Only home profiles may have a `profile_router` section; this cross-table
+  rule is validated in `clean()` and the services.
+- **The accent token set and per-section layout variants** hold a single `default` value until
+  Phase 3 and Phase 4 design them; the database enforces the layout map.
+- **`Profile.default_resume`** arrives with the `Resume` model in Phase 8.
+- **Blank means "not stated"**: site availability and a project's status may be empty rather than
+  default to a claim.
+- **English is required at the database level too** (not NULL, not blank) wherever the original
+  field is required; Korean and Uzbek columns are always optional.
+- **`ImportedRecord`** (core) records which record the draft import created for which manifest
+  key: provenance only, never content (D-039).
+
+### D-038 · The temporary admin
+**Status:** Accepted · 2026-09-27
+**Decision:** Django admin, with modeltranslation's plain `TranslationAdmin` (language fields shown
+side by side), is the content editor until the dashboard (Phase 5). It is mounted at
+`DJANGO_ADMIN_PATH` (default `admin/`) and **not mounted in production** until Phase 5 puts it
+behind allauth with MFA (`DJANGO_ADMIN_ENABLED`, default off in production settings).
+**Rejected:** The tabbed translation admin, which loads jQuery UI from a CDN (against the
+self-hosting and CSP rules).
+
+### D-039 · Real content is drafted into a manifest, then loaded as unpublished drafts
+**Status:** Accepted · 2026-09-27
+**Decision:** Reading CVs and READMEs and deciding what they establish is drafting work, not code:
+its output is a JSON manifest in the git-ignored `content-import/`, in which every record cites its
+source. `manage.py draft_content` validates that manifest strictly (any error aborts before
+anything is written) and loads it. Every record is unpublished; a year-only date or a missing end
+date becomes a `TODO(odilbek)` note; published records are never modified; drafts deleted since an
+import are never recreated. The format is in `docs/CONTENT_IMPORT.md`.
+**Rejected:** Parsing CVs automatically, which would need guesswork or an AI system, and would
+invent structure the sources don't state.
+
+### D-040 · Demo content is fictional and never mixes with real content
+**Status:** Accepted · 2026-09-27
+**Decision:** `manage.py seed_demo` creates an obviously fictional site ("Alex Demo", `demo-`
+slugs, `@example.com`), published through the publish service, and removes it with `--reset`. It
+refuses to run on a database holding any real content; demo work uses a separate database.

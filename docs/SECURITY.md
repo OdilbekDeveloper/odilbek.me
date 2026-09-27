@@ -41,6 +41,8 @@ The CSP directives:
 | Authorization | Every dashboard view requires staff. **A test walks every URL in the `dashboard` namespace** and asserts that anonymous and non-staff users are refused |
 | Sessions and CSRF | Secure, HttpOnly, SameSite=Lax, **host-only** cookies (never `.odilbek.me`); CSRF on every form; explicit `CSRF_TRUSTED_ORIGINS` |
 | Draft leakage | Public reads only through selectors built on `QuerySet.public()`, tested per entity. `?preview=1` is honoured for staff only and returns `no-store` |
+| Publication integrity | `is_published` is never a form field; publishing goes through one service (D-035). PostgreSQL refuses a published record whose text contains a `TODO(odilbek` marker, whatever path the write takes (admin, bulk update, shell) |
+| Temporary admin (Phase 2–4) | Django admin, staff only, **not mounted in production** until Phase 5 puts it behind allauth + MFA (`DJANGO_ADMIN_ENABLED`, off by default in production) |
 
 **Input, uploads and abuse**
 
@@ -52,12 +54,24 @@ The CSP directives:
 | Abuse | Turnstile, honeypot and timing token on the contact form; django-ratelimit on `/contact/` and `/e/`; a Cloudflare rate-limit rule on login and contact; beacon payloads ≤ 2 KB with an Origin check; `DATA_UPLOAD_MAX_MEMORY_SIZE` set |
 | Expensive work | PDFs are generated only by staff and stored. **No anonymous request ever triggers PDF rendering** |
 
-Upload rules:
-- **Staff-only.**
-- An allowlist by extension, **magic bytes** and size: images ≤ 10 MB, PDFs ≤ 5 MB.
-- Images are **re-encoded** with Pillow, which strips EXIF/GPS and neutralizes polyglots, with
-  `MAX_IMAGE_PIXELS` set. **No SVG.**
-- Random filenames, served from a **separate origin** (`media.odilbek.me`).
+Upload rules (implemented in `apps/core/media.py`, D-034):
+- **Staff-only.** The model's file field is not editable; the only way in is the pipeline, which the
+  admin's upload form and the import command both call.
+- An allowlist by extension, **magic bytes** and size: JPEG, PNG, WebP or AVIF images ≤ 10 MB,
+  PDFs ≤ 5 MB. The extension must agree with the magic bytes, and the declared content type must
+  not contradict them. **No SVG, GIF or HEIC.**
+- Images are refused if they contain active content anywhere (`<script`, `<?php`, `<html`, `<svg`,
+  `javascript:`, an embedded PDF), or if their container does not end where the image ends (a PNG
+  with trailing data; a JPEG trailed by an archive or executable; a WebP or AVIF whose structure
+  does not cover the file). Pillow must fully decode them within 50 megapixels. Animated images
+  are refused.
+- Images are **rebuilt from pixels** after applying the EXIF orientation and converting to sRGB:
+  no EXIF, GPS, XMP or ICC data survives, and the uploaded bytes are never stored.
+- PDFs are stored as uploaded after checking their header, their end marker and the absence of
+  JavaScript, launch actions and embedded files.
+- Random, server-chosen filenames (the uploaded name is never used); files served from a
+  **separate origin** (`media.odilbek.me`, Phase 10). Deleting an asset deletes its files.
+- Every rule has a synthetic hostile fixture in `tests/test_media.py`.
 
 **Data and operations**
 
@@ -90,7 +104,11 @@ The repository is public (D-002). Therefore:
 - **Real career content lives only in the database and R2.** It never goes in fixtures,
   migrations, tests, docs or seed files.
 - **`content-import/` is git-ignored.** CVs and photos placed there are read locally and loaded
-  into the database by `draft_content`; they are never committed.
+  into the database by `draft_content`; they are never committed. Tests fail if the folder stops
+  being ignored, if anything under it is tracked, or if any image or document file is tracked
+  (`tests/test_repository_hygiene.py`). The import refuses a source folder elsewhere inside the
+  repository. See `CONTENT_IMPORT.md`.
+- **Demo data never mixes with real data**: `seed_demo` refuses a database holding real content.
 - **Test and demo data is obviously fictional** (e.g. "Example Project", `example.com`).
 - **Before every commit, review the diff for:**
   - secrets and tokens
@@ -112,8 +130,11 @@ These must exist and pass. Structural tests are written before the features they
 | Production refuses to start without its secrets or on a non-PostgreSQL database | 1 ✅ |
 | Every top-level route segment is a reserved profile slug | 1 ✅ |
 | The production image runs unprivileged and cannot modify its code (CI) | 1 ✅ |
-| `public()` hides unpublished/unlisted items for every public model | 2 |
-| Upload validation: oversize, wrong magic bytes, SVG, polyglot rejected; EXIF stripped | 2 |
+| `public()` hides unpublished/unlisted items for every public model | 2 ✅ |
+| Upload validation: oversize, wrong magic bytes, SVG, polyglot rejected; EXIF stripped | 2 ✅ |
+| A record with a TODO marker cannot be published, even by a bulk update | 2 ✅ |
+| Publication is not editable in the admin; the admin is not mounted in production | 2 ✅ |
+| Nothing under `content-import/`, and no image or document, is tracked by git | 2 ✅ |
 | Drafts never render publicly; preview is staff-only | 4 |
 | Every dashboard URL refuses anonymous and non-staff users | 5 |
 | MFA enforced for staff in production settings | 5 |

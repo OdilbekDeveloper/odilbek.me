@@ -146,6 +146,9 @@ jobs:
           css=$(grep -o 'href="/static/css/tailwind\.[0-9a-f]*\.css"' home.html | cut -d'"' -f2)
           test -n "$css"
           curl -fsS -o /dev/null -H 'X-Forwarded-Proto: https' "http://localhost:8000$css"
+          # The image's Pillow can encode the media variants (D-034).
+          docker exec web python -c "from PIL import features as f; \
+            assert all(f.check(x) for x in ('avif', 'webp', 'littlecms2'))"
           # The process is unprivileged and cannot modify the application. (An explicit `if`, not
           # `! cmd`: bash's errexit ignores negated commands, so that form could never fail.)
           test "$(docker exec web id -u)" = 10001
