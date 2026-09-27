@@ -12,6 +12,10 @@ source. This module validates the manifest strictly, then loads it:
 - nothing is written anywhere but the local database and media storage
 
 Any error aborts before anything is written. docs/CONTENT_IMPORT.md describes the format.
+
+`seed_demo` loads its fictional manifest through the same Loader with origin=demo
+(apps/profiles/demo.py). Real drafts and demo content never share a database: each refuses a
+database that holds the other.
 """
 
 import json
@@ -45,7 +49,7 @@ from apps.career.models import (
 from apps.core import media
 from apps.core.constraints import HTTP_URL_PATTERN, SLUG_PATTERN
 from apps.core.content import TODO_MARKER, language_codes, todo_fields
-from apps.core.models import ImportedRecord, MediaAsset, SiteSettings
+from apps.core.models import ImportedRecord, ImportOrigin, MediaAsset, SiteSettings
 from apps.profiles import services
 from apps.profiles.models import (
     ContactFormVariant,
@@ -229,9 +233,10 @@ class Reader:
 
 
 class Loader:
-    def __init__(self, root, manifest, *, update=False):
+    def __init__(self, root, manifest, *, update=False, origin=ImportOrigin.DRAFT):
         self.root = Path(root).resolve()
         self.update = update
+        self.origin = origin
         self.errors = []
         self.report = Report()
         self.sources = {}
@@ -662,12 +667,36 @@ class Loader:
 
     # -- applying ------------------------------------------------------------
 
+    def check_database(self):
+        """Real drafts and the fictional demo dataset never share a database."""
+        if not ImportedRecord.objects.exclude(origin=self.origin).exists():
+            return
+        if self.origin == ImportOrigin.DRAFT:
+            message = (
+                "This database holds the fictional demo dataset (seed_demo). Real drafts never "
+                "mix with it: import into your main database, or remove the demo content first "
+                "with `manage.py seed_demo --reset`."
+            )
+        else:
+            message = (
+                "This database holds real drafts (draft_content). The demo dataset never mixes "
+                "with them: use a separate database."
+            )
+        raise ManifestError([message])
+
     def validate_media(self):
-        """Run every media file through the pipeline's validation (no writes)."""
+        """Run every new media file through the pipeline's validation (no writes). The prepared
+        results are kept, so apply() stores each file without processing it a second time. A
+        file already imported (or deleted since) is never read again: it will not be stored."""
+        self._prepared = {}
         for entry in self.entries.get("media", []):
+            if ImportedRecord.objects.filter(model_label="core.mediaasset", key=entry.key).exists():
+                continue
             with open(entry.refs["file"], "rb") as handle:
                 try:
-                    media.prepare(File(handle, name=entry.refs["file"].name))
+                    self._prepared[entry.key] = media.prepare(
+                        File(handle, name=entry.refs["file"].name)
+                    )
                 except ValidationError as exc:
                     self.error(f"{entry.path}.file", " ".join(exc.messages))
         if self.errors:
@@ -675,6 +704,7 @@ class Loader:
 
     def plan(self):
         """What apply() would do, computed read-only (for --dry-run)."""
+        self.check_database()
         self.validate_media()
         for section, entries in self.entries.items():
             for entry in entries:
@@ -694,11 +724,16 @@ class Loader:
                 self.report.add(section, entry.key, outcome)
         return self.report
 
-    def apply(self):
+    def apply(self, then=None):
+        """Load everything in one transaction. `then(report)` runs inside that transaction
+        (seed_demo's review step), so a failure there rolls the whole import back too."""
+        self.check_database()
         self.validate_media()
         try:
             with transaction.atomic():
                 self._apply_all()
+                if then is not None:
+                    then(self.report)
         except ValidationError as exc:
             media._delete_names(self._stored_files)
             details = (
@@ -726,9 +761,14 @@ class Loader:
         if natural:
             obj = model.objects.filter(**natural).first()
             if obj:
-                ImportedRecord.objects.create(model_label=label, key=key, object_id=obj.pk)
+                self._record(label, key, obj)
                 return "imported", obj
         return "new", None
+
+    def _record(self, label, key, obj):
+        ImportedRecord.objects.create(
+            model_label=label, key=key, object_id=obj.pk, origin=self.origin
+        )
 
     def _upsert(self, entry, model, natural=None):
         """Create the record, update it (--update, unpublished only), or leave it alone.
@@ -756,9 +796,7 @@ class Loader:
         obj.save()
         outcome = "created" if status == "new" else "updated"
         if status == "new":
-            ImportedRecord.objects.create(
-                model_label=model._meta.label_lower, key=entry.key, object_id=obj.pk
-            )
+            self._record(model._meta.label_lower, entry.key, obj)
         self.report.add(entry.section, entry.key, outcome)
         return obj, outcome
 
@@ -782,13 +820,8 @@ class Loader:
             if obj is not None:
                 self.report.add("media", entry.key, "exists: left untouched")
             else:
-                with open(entry.refs["file"], "rb") as handle:
-                    obj, created = media.ingest(
-                        File(handle, name=entry.refs["file"].name), **entry.fields
-                    )
-                ImportedRecord.objects.create(
-                    model_label="core.mediaasset", key=entry.key, object_id=obj.pk
-                )
+                obj, created = media.store(self._prepared[entry.key], **entry.fields)
+                self._record("core.mediaasset", entry.key, obj)
                 if created:
                     self._stored_files.extend(media.asset_file_names(obj))
                     self._add_todos(entry, obj)
@@ -897,7 +930,7 @@ class Loader:
 
     def _collect_todos(self):
         """Which imported records still contain TODO markers, as they stand in the database."""
-        for record in ImportedRecord.objects.all():
+        for record in ImportedRecord.objects.filter(origin=self.origin):
             model = apps.get_model(record.model_label)
             obj = model.objects.filter(pk=record.object_id).first()
             if obj is not None and (fields := todo_fields(obj)):

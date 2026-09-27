@@ -1,0 +1,1235 @@
+{
+  "schema": 1,
+  "sources": {
+    "demo-brief": "brief.md"
+  },
+  "site": {
+    "owner_name": {"en": "Alex Demo", "ko": "알렉스 데모"},
+    "tagline": {
+      "en": "Backend developer and Korean–English interpreter · a fictional demo persona",
+      "ko": "백엔드 개발자이자 한영 통역사 · 가상의 데모 인물"
+    },
+    "location": {"en": "Seoul, South Korea", "ko": "대한민국 서울"},
+    "timezone": "Asia/Seoul",
+    "public_email": "alex.demo@example.com",
+    "portrait": "portrait",
+    "sources": ["demo-brief"]
+  },
+  "media": [
+    {
+      "key": "portrait",
+      "file": "images/portrait.jpg",
+      "alt_text": {
+        "en": "Demo portrait placeholder: soft abstract shapes on a warm gradient, not a photo of anyone",
+        "ko": "데모용 인물 사진 자리: 따뜻한 그라데이션 위의 추상 도형이며, 실제 인물 사진이 아닙니다"
+      },
+      "focal": [0.5, 0.38],
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "hero-translator",
+      "file": "images/hero-translator.png",
+      "alt_text": {
+        "en": "Demo hero image: two overlapping speech bubbles in blue and coral",
+        "ko": "데모 히어로 이미지: 파란색과 산호색 말풍선 두 개가 겹쳐 있는 모습"
+      },
+      "caption": {
+        "en": "Generated illustration for the demo translator profile",
+        "ko": "데모 번역가 프로필용으로 생성한 일러스트"
+      },
+      "focal": [0.62, 0.45],
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "og-default",
+      "file": "images/og-default.png",
+      "alt_text": {
+        "en": "Demo social card: the word DEMO on a dark geometric background",
+        "ko": "데모 소셜 카드: 어두운 기하학 무늬 배경 위의 DEMO 글자"
+      },
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "atlas-cover",
+      "file": "images/atlas-cover.png",
+      "alt_text": {
+        "en": "Abstract diagram of connected workflow nodes (demo illustration)",
+        "ko": "서로 연결된 워크플로 노드를 표현한 추상 도식 (데모 일러스트)"
+      },
+      "focal": [0.45, 0.5],
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "atlas-queue",
+      "file": "images/atlas-queue.webp",
+      "alt_text": {
+        "en": "Job queue dashboard drawn as stacked status cards (demo illustration)",
+        "ko": "상태 카드가 쌓인 작업 대기열 대시보드 (데모 일러스트)"
+      },
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "atlas-retries",
+      "file": "images/atlas-retries.png",
+      "alt_text": {
+        "en": "Retry timeline drawn as bars of different lengths (demo illustration)",
+        "ko": "길이가 다른 막대로 그린 재시도 타임라인 (데모 일러스트)"
+      },
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "relaybot-cover",
+      "file": "images/relaybot-cover.jpg",
+      "alt_text": {
+        "en": "Message bubbles passing between two panels (demo illustration)",
+        "ko": "두 패널 사이를 오가는 메시지 말풍선 (데모 일러스트)"
+      },
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "contextdesk-cover",
+      "file": "images/contextdesk-cover.avif",
+      "alt_text": {
+        "en": "Grid of document cards with one highlighted (demo illustration)",
+        "ko": "한 장이 강조된 문서 카드 격자 (데모 일러스트)"
+      },
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "hanbridge-cover",
+      "file": "images/hanbridge-cover.png",
+      "alt_text": {
+        "en": "Two columns of text lines joined by a bridge-shaped curve (demo illustration)",
+        "ko": "다리 모양 곡선으로 이어진 두 열의 텍스트 줄 (데모 일러스트)"
+      },
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "hanbridge-review",
+      "file": "images/hanbridge-review.webp",
+      "alt_text": {
+        "en": "Side-by-side translation review screen with one row highlighted (demo illustration)",
+        "ko": "원문과 번역문을 나란히 놓고 한 줄을 강조한 검수 화면 (데모 일러스트)"
+      },
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "signalflow-cover",
+      "file": "images/signalflow-cover.webp",
+      "alt_text": {
+        "en": "Wave lines passing through three filter stages (demo illustration)",
+        "ko": "세 단계의 필터를 통과하는 파형 (데모 일러스트)"
+      },
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "northgale-cover",
+      "file": "images/northgale-cover.jpg",
+      "alt_text": {
+        "en": "Calendar grid with a few highlighted slots (demo illustration)",
+        "ko": "몇 칸이 강조된 달력 격자 (데모 일러스트)"
+      },
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "quickform-cover",
+      "file": "images/quickform-cover.png",
+      "alt_text": {
+        "en": "Small icon of a form with three fields and a button (demo illustration)",
+        "ko": "입력 칸 세 개와 버튼이 있는 작은 양식 아이콘 (데모 일러스트)"
+      },
+      "sources": ["demo-brief"]
+    }
+  ],
+  "skill_categories": [
+    {
+      "slug": "backend",
+      "kind": "technical",
+      "name": {"en": "Backend engineering", "ko": "백엔드 엔지니어링"},
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "ai-automation",
+      "kind": "technical",
+      "name": {"en": "AI and automation", "ko": "AI·자동화"},
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "infrastructure",
+      "kind": "tool",
+      "name": {"en": "Tools and infrastructure", "ko": "도구·인프라"},
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "languages",
+      "kind": "language",
+      "name": {"en": "Languages", "ko": "언어"},
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "language-services",
+      "kind": "domain",
+      "name": {"en": "Language services", "ko": "언어 서비스"},
+      "sources": ["demo-brief"]
+    }
+  ],
+  "skills": [
+    {
+      "slug": "python",
+      "category": "backend",
+      "name": {"en": "Python"},
+      "description": {
+        "en": "Main language since university, used for APIs, automation and data work.",
+        "ko": "대학 시절부터 주력으로 써 온 언어로, API와 자동화, 데이터 작업에 사용합니다."
+      },
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "django",
+      "category": "backend",
+      "name": {"en": "Django"},
+      "description": {
+        "en": "Web applications and APIs, including admin tooling and migrations for long-lived products.",
+        "ko": "오래 운영되는 서비스의 웹 애플리케이션과 API를 만들고, 관리 도구와 마이그레이션까지 다룹니다."
+      },
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "postgresql",
+      "category": "backend",
+      "name": {"en": "PostgreSQL"},
+      "description": {
+        "en": "Schema design, constraints and query tuning; the database behind most projects here.",
+        "ko": "스키마 설계와 제약 조건, 쿼리 튜닝을 다룹니다. 여기 소개한 프로젝트 대부분이 쓰는 데이터베이스입니다."
+      },
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "rest-apis",
+      "category": "backend",
+      "name": {"en": "REST API design", "ko": "REST API 설계"},
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "rust",
+      "category": "backend",
+      "name": {"en": "Rust"},
+      "level_label": {"en": "Learning", "ko": "학습 중"},
+      "description": {
+        "en": "Being learned on a side project; not used in production yet.",
+        "ko": "개인 프로젝트로 배우는 중이며, 아직 실서비스에는 쓰지 않았습니다."
+      },
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "workflow-automation",
+      "category": "ai-automation",
+      "name": {"en": "Workflow automation", "ko": "업무 자동화"},
+      "description": {
+        "en": "Replacing repetitive manual steps with small services people can trust and override.",
+        "ko": "사람이 반복하던 수작업을, 믿고 맡기되 필요하면 직접 개입할 수 있는 작은 서비스로 바꿉니다."
+      },
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "ai-integration",
+      "category": "ai-automation",
+      "name": {"en": "AI integration", "ko": "AI 연동"},
+      "description": {
+        "en": "Connecting language models to existing tools, with retrieval, guardrails and human review.",
+        "ko": "검색 증강, 안전장치, 사람의 검토를 갖춰 언어 모델을 기존 도구에 연결합니다."
+      },
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "redis",
+      "category": "infrastructure",
+      "name": {"en": "Redis"},
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "docker",
+      "category": "infrastructure",
+      "name": {"en": "Docker"},
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "linux",
+      "category": "infrastructure",
+      "name": {"en": "Linux"},
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "git",
+      "category": "infrastructure",
+      "name": {"en": "Git"},
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "korean",
+      "category": "languages",
+      "name": {"en": "Korean", "ko": "한국어"},
+      "level_label": {
+        "en": "Near-native (professional interpreting)",
+        "ko": "원어민에 가까운 수준 (전문 통역)"
+      },
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "english",
+      "category": "languages",
+      "name": {"en": "English", "ko": "영어"},
+      "level_label": {"en": "Native", "ko": "모국어"},
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "technical-translation",
+      "category": "language-services",
+      "name": {"en": "Technical translation", "ko": "기술 번역"},
+      "description": {
+        "en": "Specifications, manuals and software interfaces, with a glossary agreed before the first page.",
+        "ko": "사양서, 매뉴얼, 소프트웨어 화면을 번역하며, 첫 페이지를 옮기기 전에 용어집부터 합의합니다."
+      },
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "consecutive-interpreting",
+      "category": "language-services",
+      "name": {"en": "Consecutive interpreting", "ko": "순차 통역"},
+      "description": {
+        "en": "Design reviews, acceptance tests and site meetings where precision matters more than speed.",
+        "ko": "속도보다 정확성이 중요한 설계 검토, 인수 시험, 현장 회의를 통역합니다."
+      },
+      "sources": ["demo-brief"]
+    }
+  ],
+  "projects": [
+    {
+      "slug": "atlas-workflow-engine",
+      "title": {"en": "Atlas Workflow Engine", "ko": "아틀라스 워크플로 엔진"},
+      "summary": {
+        "en": "A job orchestration service that runs about 40,000 scheduled and event-driven tasks a day, with retries, audit trails and per-team quotas.",
+        "ko": "재시도, 감사 기록, 팀별 할당량을 갖추고 하루 약 4만 건의 예약·이벤트 기반 작업을 처리하는 작업 오케스트레이션 서비스."
+      },
+      "context": {
+        "en": "Built at Northgale Systems to replace about 300 cron jobs owned by five teams.",
+        "ko": "노스게일 시스템즈에서 다섯 팀이 나눠 관리하던 크론 작업 약 300개를 대체하기 위해 만들었습니다."
+      },
+      "description": {
+        "en": "Atlas started as a weekend prototype and became the way Northgale runs background work.\n\n## The problem\n\nFive teams owned about 300 cron jobs spread across nine servers. Failures surfaced when customers complained, retries were copy-pasted shell loops, and nobody could say which job had last touched a record.\n\n## What Atlas does\n\n- Accepts jobs through a small REST API or from database events, and stores every run in PostgreSQL.\n- Retries with exponential back-off, and keeps a dead-letter queue that someone actually reads.\n- Enforces per-team concurrency quotas, so one team’s backlog cannot starve the others.\n- Keeps an audit trail that answers “which job changed this record, and when?”\n\n## How it is built\n\nA Django service with a thin API layer, stateless workers that pull from Redis, and PostgreSQL as the source of truth. The scheduler is a single leader elected through a PostgreSQL advisory lock, so a restart never runs a job twice.\n\n## Outcome\n\nThe last cron server was switched off eight months after the first job moved. On-call pages for background work fell from about twelve a month to two.",
+        "ko": "아틀라스는 주말에 만든 시제품에서 출발해 노스게일이 백그라운드 작업을 운영하는 표준 방식이 되었습니다.\n\n## 문제\n\n다섯 팀이 서버 아홉 대에 흩어진 크론 작업 약 300개를 각자 관리하고 있었습니다. 장애는 고객 문의가 들어와야 드러났고, 재시도는 복사해 붙인 셸 반복문이었으며, 어떤 작업이 마지막으로 어떤 데이터를 바꿨는지 아무도 답할 수 없었습니다.\n\n## 아틀라스가 하는 일\n\n- 작은 REST API나 데이터베이스 이벤트로 작업을 받고, 모든 실행 기록을 PostgreSQL에 남깁니다.\n- 지수 백오프로 재시도하고, 실제로 들여다보는 데드레터 큐를 둡니다.\n- 팀별 동시 실행 한도를 적용해 한 팀의 적체가 다른 팀의 작업을 막지 않게 합니다.\n- “어떤 작업이 언제 이 데이터를 바꿨는가”에 답하는 감사 기록을 남깁니다.\n\n## 구조\n\n얇은 API 계층을 둔 Django 서비스, Redis에서 작업을 가져가는 무상태 워커, 그리고 기준 데이터 저장소인 PostgreSQL로 이루어져 있습니다. 스케줄러는 PostgreSQL 어드바이저리 락으로 선출된 단일 리더라서, 재시작하더라도 같은 작업이 두 번 실행되지 않습니다.\n\n## 결과\n\n첫 작업을 옮긴 지 8개월 만에 마지막 크론 서버를 껐습니다. 백그라운드 작업 관련 당직 호출은 한 달에 약 12건에서 2건으로 줄었습니다."
+      },
+      "highlights": {
+        "en": "- Moved about 300 cron jobs from nine servers onto one service\n- Cut on-call pages for background work from about twelve a month to two\n- Designed the audit trail used in two compliance reviews",
+        "ko": "- 서버 9대에 흩어진 크론 작업 약 300개를 하나의 서비스로 이전\n- 백그라운드 작업 당직 호출을 월 약 12건에서 2건으로 줄임\n- 두 차례의 컴플라이언스 검토에 쓰인 감사 기록 설계"
+      },
+      "role": {"en": "Lead backend developer", "ko": "백엔드 리드 개발자"},
+      "project_status": "live",
+      "started_on": "2021-02",
+      "ended_on": "2023-06",
+      "skills": ["python", "django", "postgresql", "redis", "rest-apis", "docker", "linux"],
+      "cover": "atlas-cover",
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "relaybot-operations-platform",
+      "title": {"en": "RelayBot Operations Platform", "ko": "릴레이봇 운영 플랫폼"},
+      "summary": {
+        "en": "Telegram bots that route field reports, approvals and shift swaps for a logistics client, with a web console for its dispatchers.",
+        "ko": "물류 고객사의 현장 보고, 결재, 근무 교대를 처리하는 텔레그램 봇과 배차 담당자용 웹 콘솔."
+      },
+      "context": {
+        "en": "Freelance work through Cobaltine Automation for a mid-sized logistics company.",
+        "ko": "코발틴 오토메이션을 통해 중견 물류 기업을 위해 진행한 프리랜스 작업입니다."
+      },
+      "description": {
+        "en": "Drivers and warehouse leads already lived in Telegram, so the platform meets them there instead of adding another app.\n\nEach bot is a short conversation flow on top of one shared Django service. Incoming messages are queued in Redis and processed idempotently, so a flaky mobile connection never creates a duplicate report. Dispatchers work from a web console with filters, CSV exports and a full audit trail.",
+        "ko": "운전기사와 창고 책임자들은 이미 텔레그램을 쓰고 있었기 때문에, 앱을 하나 더 설치하게 하는 대신 그 안에서 일을 처리하도록 설계했습니다.\n\n봇마다 짧은 대화 흐름이 있고, 모두 하나의 Django 서비스를 공유합니다. 들어온 메시지는 Redis 큐에 쌓인 뒤 멱등하게 처리되므로, 모바일 연결이 불안정해도 보고가 중복되지 않습니다. 배차 담당자는 필터, CSV 내보내기, 전체 감사 기록을 갖춘 웹 콘솔에서 일합니다."
+      },
+      "highlights": {
+        "en": "- Replaced paper shift-swap forms for about 180 staff\n- Median time from message to dispatcher view: under two seconds",
+        "ko": "- 직원 약 180명의 종이 근무 교대 신청서를 대체\n- 메시지 수신부터 배차 화면 표시까지 중앙값 2초 미만"
+      },
+      "role": {"en": "Backend developer and bot designer", "ko": "백엔드 개발 및 봇 설계"},
+      "project_status": "live",
+      "started_on": "2023-10",
+      "skills": ["python", "django", "redis", "workflow-automation", "rest-apis", "docker"],
+      "cover": "relaybot-cover",
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "contextdesk-ai-assistant",
+      "title": {"en": "ContextDesk AI Assistant", "ko": "컨텍스트데스크 AI 어시스턴트"},
+      "summary": {
+        "en": "An internal assistant that answers support questions from a company’s approved documentation, cites its sources, and hands over to a person when unsure.",
+        "ko": "회사가 승인한 문서만 근거로 고객 지원 질문에 답하고, 출처를 밝히며, 확신이 없으면 담당자에게 넘기는 사내 어시스턴트."
+      },
+      "context": {
+        "en": "In progress with a two-person team at Cobaltine Automation.",
+        "ko": "코발틴 오토메이션의 2인 팀과 함께 개발하고 있습니다."
+      },
+      "description": {
+        "en": "ContextDesk is deliberately modest. It answers only from documents the company has approved, shows the passages it relied on, and says “I don’t know” rather than guessing.\n\nDocuments are split into passages and indexed in PostgreSQL. Every answer is logged with its sources so the support team can review it; their corrections go back into the documents, not into prompt tweaks.",
+        "ko": "컨텍스트데스크는 일부러 욕심을 줄였습니다. 회사가 승인한 문서만 근거로 답하고, 참고한 구절을 함께 보여 주며, 추측하는 대신 “모르겠습니다”라고 답합니다.\n\n문서는 구절 단위로 나뉘어 PostgreSQL에 색인됩니다. 모든 답변은 출처와 함께 기록되어 지원팀이 검토할 수 있고, 지원팀의 수정 사항은 프롬프트 조정이 아니라 문서 자체에 반영됩니다."
+      },
+      "role": {"en": "Backend and integration developer", "ko": "백엔드·연동 개발"},
+      "project_status": "in_progress",
+      "started_on": "2024-05",
+      "demo_url": "https://contextdesk.example.com",
+      "skills": ["python", "django", "postgresql", "ai-integration"],
+      "cover": "contextdesk-cover",
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "hanbridge-localization-hub",
+      "title": {"en": "HanBridge Localization Hub", "ko": "한브릿지 현지화 허브"},
+      "summary": {
+        "en": "A glossary-first workspace where Korean–English translators review machine pre-fills segment by segment and keep terminology consistent across clients.",
+        "ko": "한영 번역가가 기계 번역 초안을 문장 단위로 검수하고, 고객사마다 다른 용어를 일관되게 관리하는 용어집 중심 작업 공간."
+      },
+      "context": {
+        "en": "A personal project that became the daily tool of a three-person translation team.",
+        "ko": "개인 프로젝트로 시작해 지금은 3인 번역팀이 매일 쓰는 도구가 되었습니다."
+      },
+      "description": {
+        "en": "HanBridge grew out of a spreadsheet of terms that had become impossible to keep in sync.\n\nEvery project starts from its client’s glossary. Source text is split into segments, a machine translation fills in a first draft, and the translator accepts, edits or rejects each segment. A term that contradicts the glossary is flagged before the file can be delivered, and approved segments feed a translation memory for the next job.\n\nThe review screen shows source and target side by side, so a second translator can check a delivery without reopening the original files.",
+        "ko": "한브릿지는 도저히 동기화할 수 없게 된 용어 스프레드시트에서 시작되었습니다.\n\n모든 프로젝트는 해당 고객사의 용어집에서 출발합니다. 원문을 문장 단위로 나누면 기계 번역이 첫 초안을 채우고, 번역가는 문장마다 초안을 채택하거나 고치거나 버립니다. 용어집과 어긋나는 용어가 있으면 파일을 납품하기 전에 반드시 표시되고, 승인된 문장은 번역 메모리에 쌓여 다음 작업에 다시 쓰입니다.\n\n검수 화면은 원문과 번역문을 나란히 보여 주기 때문에, 두 번째 번역가가 원본 파일을 다시 열지 않고도 납품물을 확인할 수 있습니다. 특히 제조와 물류 분야처럼 같은 부품이나 공정을 고객사마다 다르게 부르는 경우에는, 용어 충돌을 초기에 잡아내는 것만으로도 수정 요청이 눈에 띄게 줄었습니다."
+      },
+      "highlights": {
+        "en": "- Cut terminology corrections in client feedback by roughly two thirds\n- Used daily by a three-person team across about 40 client glossaries\n- Machine pre-fills stay marked until a person approves them",
+        "ko": "- 고객 피드백의 용어 수정 요청을 약 3분의 2 줄임\n- 3인 팀이 고객사 용어집 약 40개를 두고 매일 사용\n- 기계 초안은 사람이 승인하기 전까지 항상 표시됨"
+      },
+      "role": {"en": "Designer, developer and first user", "ko": "설계, 개발, 그리고 첫 번째 사용자"},
+      "project_status": "live",
+      "started_on": "2023-03",
+      "github_url": "https://github.example.com/alex-demo/hanbridge",
+      "demo_url": "https://hanbridge.example.com",
+      "skills": [
+        "python",
+        "django",
+        "postgresql",
+        "ai-integration",
+        "technical-translation",
+        "korean",
+        "english"
+      ],
+      "cover": "hanbridge-cover",
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "beacon-operations-console",
+      "title": {"en": "Beacon Operations Console", "ko": "비컨 운영 콘솔"},
+      "summary": {
+        "en": "An admin console that gave Northgale’s support team safe, audited account actions instead of ad-hoc database queries.",
+        "ko": "노스게일 고객지원팀이 데이터베이스를 직접 조회하는 대신, 기록이 남는 안전한 방식으로 계정을 처리하도록 만든 관리 콘솔."
+      },
+      "context": {
+        "en": "Northgale Systems, internal support tooling.",
+        "ko": "노스게일 시스템즈의 사내 지원 도구입니다."
+      },
+      "description": {
+        "en": "Support staff used to ask engineers to run SQL for refunds, account merges and email changes. Beacon turned the twelve most common requests into reviewed, permission-checked actions with an audit log, and routed everything else through a ticket."
+      },
+      "role": {"en": "Backend developer", "ko": "백엔드 개발"},
+      "project_status": "archived",
+      "started_on": "2020-06",
+      "ended_on": "2021-09",
+      "skills": ["django", "postgresql", "docker", "linux"],
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "signalflow-data-pipeline",
+      "title": {"en": "SignalFlow Data Pipeline", "ko": "시그널플로 데이터 파이프라인"},
+      "summary": {
+        "en": "Collects readings from 1,200 warehouse sensors, cleans them in three stages and publishes an hourly data-quality report.",
+        "ko": "창고 센서 1,200개의 측정값을 수집해 세 단계로 정제하고, 매시간 데이터 품질 보고서를 발행하는 파이프라인."
+      },
+      "context": {
+        "en": "Freelance work through Cobaltine Automation for a cold-storage operator.",
+        "ko": "코발틴 오토메이션을 통해 냉동 창고 운영사를 위해 진행한 프리랜스 작업입니다."
+      },
+      "description": {
+        "en": "Temperature and door sensors report every thirty seconds, often out of order and sometimes twice. SignalFlow deduplicates and reorders the readings, fills short gaps only where that is safe, and flags anything it could not repair instead of hiding it.\n\nA small anomaly model marks readings worth a human look; it never changes data on its own. Operators get an hourly report, and an alert when a room drifts out of range.",
+        "ko": "온도 센서와 출입문 센서는 30초마다 값을 보내는데, 순서가 뒤섞이거나 같은 값이 두 번 오는 일이 잦습니다. 시그널플로는 중복을 없애고 순서를 바로잡으며, 안전한 경우에만 짧은 공백을 메우고, 복구하지 못한 값은 숨기지 않고 표시합니다.\n\n작은 이상 탐지 모델은 사람이 확인할 만한 값에 표시만 할 뿐, 데이터를 스스로 바꾸지 않습니다. 운영자는 매시간 보고서를 받고, 보관실 온도가 허용 범위를 벗어나면 알림을 받습니다."
+      },
+      "highlights": {
+        "en": "- 1,200 sensors, about 3.5 million readings a day\n- Reduced false temperature alarms by about 70%\n- Every repaired value records what was changed and why"
+      },
+      "role": {"en": "Data and automation engineer", "ko": "데이터·자동화 엔지니어"},
+      "project_status": "live",
+      "started_on": "2024-01",
+      "ended_on": "2024-09",
+      "github_url": "https://github.example.com/alex-demo/signalflow",
+      "skills": [
+        "python",
+        "postgresql",
+        "redis",
+        "docker",
+        "linux",
+        "git",
+        "workflow-automation",
+        "rest-apis",
+        "ai-integration"
+      ],
+      "cover": "signalflow-cover",
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "northgale-booking-platform",
+      "title": {
+        "en": "Northgale Clinic and Studio Booking Platform with Multilingual Reminders",
+        "ko": "노스게일 클리닉·스튜디오 예약 플랫폼"
+      },
+      "summary": {
+        "en": "Online booking for about 60 small clinics and fitness studios, with deposits, waitlists, and reminders in Korean or English.",
+        "ko": "소규모 클리닉과 피트니스 스튜디오 약 60곳을 위한 온라인 예약 서비스로, 예약금, 대기자 명단, 한국어·영어 알림을 지원합니다."
+      },
+      "context": {
+        "en": "Northgale Systems’ customer-facing product. I led the backend of its second version.",
+        "ko": "노스게일 시스템즈의 대고객 제품으로, 2차 버전의 백엔드 개발을 이끌었습니다."
+      },
+      "description": {
+        "en": "The first version sent reminders by SMS only, and double-booked whenever two receptionists edited the same day. Version two moved scheduling into PostgreSQL exclusion constraints, so an overlapping booking is impossible rather than unlikely.\n\nReminders are templates per business and per language. A clinic can switch any customer to Korean or English, and every template change is previewed before it is sent.",
+        "ko": "첫 번째 버전은 문자 알림만 지원했고, 두 명의 접수 담당자가 같은 날짜를 동시에 수정하면 이중 예약이 생기곤 했습니다. 2차 버전에서는 일정을 PostgreSQL의 배제 제약 조건으로 관리해, 겹치는 예약이 ‘일어나기 어려운’ 것이 아니라 ‘일어날 수 없는’ 것이 되었습니다.\n\n알림은 업체별, 언어별 템플릿으로 관리합니다. 업체는 고객마다 한국어나 영어를 선택할 수 있고, 템플릿을 바꾸면 발송 전에 반드시 미리보기를 거칩니다."
+      },
+      "highlights": {
+        "en": "- Double bookings went from several a week to none\n- Missed appointments fell by about a quarter after reminders launched",
+        "ko": "- 주 몇 건씩 생기던 이중 예약이 0건으로\n- 알림 도입 후 예약 불참이 약 4분의 1 감소"
+      },
+      "role": {"en": "Backend lead, version 2", "ko": "2차 버전 백엔드 리드"},
+      "project_status": "live",
+      "started_on": "2022-01",
+      "ended_on": "2023-08",
+      "demo_url": "https://booking.northgale.example.com",
+      "skills": [
+        "python",
+        "django",
+        "postgresql",
+        "rest-apis",
+        "redis",
+        "technical-translation"
+      ],
+      "cover": "northgale-cover",
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "pulsetrack-clinical-data-prototype",
+      "title": {"en": "PulseTrack Clinical Data Prototype", "ko": "펄스트랙 임상 데이터 프로토타입"},
+      "summary": {
+        "en": "A concept for turning exported wearable heart-rate data into a one-page summary a clinician could scan in a minute.",
+        "ko": "웨어러블 기기에서 내보낸 심박 데이터를 임상의가 1분 안에 훑어볼 수 있는 한 쪽 요약으로 바꾸는 콘셉트."
+      },
+      "description": {
+        "en": "An exploratory prototype: import exported readings, flag gaps and artefacts, and lay out a single summary page. It has only ever used synthetic data.",
+        "ko": "탐색용 프로토타입으로, 내보낸 측정값을 가져와 공백과 잡음을 표시하고 요약 한 쪽을 구성합니다. 지금까지 합성 데이터만 사용했습니다."
+      },
+      "project_status": "concept",
+      "started_on": "2024-11",
+      "skills": ["python", "django", "postgresql", "rust"],
+      "todo": [
+        "say whether the pilot with the research group has ended, and what may be published about it"
+      ],
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "quickform-api",
+      "title": {"en": "QuickForm API", "ko": "퀵폼 API"},
+      "summary": {
+        "en": "A tiny JSON API for collecting form submissions.",
+        "ko": "양식 제출 데이터를 받는 작은 JSON API."
+      },
+      "role": {"en": "Intern project", "ko": "인턴 프로젝트"},
+      "project_status": "archived",
+      "started_on": "2017-09",
+      "ended_on": "2017-11",
+      "github_url": "https://github.example.com/alex-demo/quickform-api",
+      "skills": ["python", "django"],
+      "cover": "quickform-cover",
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "smart-port-terminology-glossary",
+      "title": {
+        "en": "Smart Port Logistics Terminology Glossary",
+        "ko": "인천 스마트 항만 물류 시스템 구축 사업 한영 기술 용어집 및 현장 통역 준비 자료"
+      },
+      "summary": {
+        "en": "A 3,200-entry Korean–English glossary and briefing pack prepared for on-site interpreting during a port automation rollout.",
+        "ko": "항만 자동화 시스템 도입 현장의 통역을 위해 준비한 한영 대역 용어 3,200개와 브리핑 자료."
+      },
+      "context": {
+        "en": "Prepared while interpreting for the Hanbit–Meridian consortium.",
+        "ko": "한빛·메리디언 컨소시엄에서 통역을 맡으며 준비했습니다."
+      },
+      "description": {
+        "en": "Crane vendors, the terminal operator and the software team each had their own names for the same equipment. The glossary settled one Korean and one English term for every component, alarm and procedure, and listed beside it the variants people actually used.\n\nBefore each meeting, a two-page briefing covered the agenda’s terms, the open issues and who was likely to say what.",
+        "ko": "크레인 제조사, 터미널 운영사, 소프트웨어 팀은 같은 장비를 저마다 다른 이름으로 불렀습니다. 용어집은 모든 부품, 경보, 절차마다 한국어와 영어 표준 용어를 하나씩 정하고, 현장에서 실제로 쓰이던 다른 표현을 옆에 함께 적었습니다.\n\n회의마다 안건에 나올 용어, 미해결 쟁점, 발언이 예상되는 사람을 정리한 두 쪽짜리 브리핑 자료를 미리 준비했습니다."
+      },
+      "role": {"en": "Terminologist and interpreter", "ko": "용어 정리 및 통역"},
+      "project_status": "archived",
+      "started_on": "2019-02",
+      "ended_on": "2020-01",
+      "skills": ["technical-translation", "consecutive-interpreting", "korean", "english"],
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "ledgerline-reconciliation-service",
+      "title": {"en": "Ledgerline Invoice Reconciliation Service", "ko": "레저라인 청구서 대사 서비스"},
+      "summary": {
+        "en": "Matches carrier invoices against shipment records and flags discrepancies for review. Shared by link only, at the client’s request.",
+        "ko": "운송사 청구서를 배송 기록과 대조해 불일치 항목을 검토 대상으로 표시합니다. 고객사 요청에 따라 링크로만 공유합니다."
+      },
+      "role": {"en": "Backend developer", "ko": "백엔드 개발"},
+      "project_status": "archived",
+      "started_on": "2022-09",
+      "ended_on": "2023-03",
+      "is_listed": false,
+      "skills": ["python", "django", "postgresql"],
+      "sources": ["demo-brief"]
+    }
+  ],
+  "experience": [
+    {
+      "key": "cobaltine-automation-engineer",
+      "role": {"en": "Automation Engineer", "ko": "자동화 엔지니어"},
+      "organization": {"en": "Cobaltine Automation", "ko": "코발틴 오토메이션"},
+      "organization_url": "https://cobaltine.example.com",
+      "location": {"en": "Remote", "ko": "원격 근무"},
+      "employment_type": "freelance",
+      "started_on": "2023-09",
+      "ended_on": "present",
+      "summary": {
+        "en": "Freelance automation engineer for an agency whose clients range from logistics to healthcare: messaging bots, data pipelines and careful AI integrations.",
+        "ko": "물류부터 헬스케어까지 다양한 고객사를 둔 에이전시에서 프리랜스 자동화 엔지니어로 일하며 메시징 봇, 데이터 파이프라인, 신중한 AI 연동을 만듭니다."
+      },
+      "highlights": {
+        "en": "- Delivered RelayBot and SignalFlow for two logistics clients\n- Building ContextDesk with a two-person team",
+        "ko": "- 두 물류 고객사에 릴레이봇과 시그널플로 납품\n- 2인 팀과 함께 컨텍스트데스크 개발 중"
+      },
+      "skills": [
+        "python",
+        "workflow-automation",
+        "ai-integration",
+        "redis",
+        "docker",
+        "postgresql"
+      ],
+      "projects": [
+        "relaybot-operations-platform",
+        "contextdesk-ai-assistant",
+        "signalflow-data-pipeline",
+        "pulsetrack-clinical-data-prototype"
+      ],
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "northgale-backend-developer",
+      "role": {"en": "Backend Developer", "ko": "백엔드 개발자"},
+      "organization": {"en": "Northgale Systems", "ko": "노스게일 시스템즈"},
+      "organization_url": "https://northgale.example.com",
+      "location": {"en": "Seoul, South Korea", "ko": "대한민국 서울"},
+      "employment_type": "full_time",
+      "started_on": "2020-03",
+      "ended_on": "2023-08",
+      "summary": {
+        "en": "Backend developer on a fourteen-person product team. Owned the job infrastructure and the support tooling, and led the backend of the booking platform’s second version.",
+        "ko": "14명 규모 제품팀의 백엔드 개발자로 작업 인프라와 고객지원 도구를 맡았고, 예약 플랫폼 2차 버전의 백엔드 개발을 이끌었습니다."
+      },
+      "highlights": {
+        "en": "- Designed and ran Atlas Workflow Engine\n- Led the backend of the booking platform’s second version\n- Mentored two interns",
+        "ko": "- 아틀라스 워크플로 엔진 설계 및 운영\n- 예약 플랫폼 2차 버전 백엔드 개발 주도\n- 인턴 두 명의 멘토 역할"
+      },
+      "skills": [
+        "python",
+        "django",
+        "postgresql",
+        "rest-apis",
+        "redis",
+        "docker",
+        "linux",
+        "git"
+      ],
+      "projects": [
+        "atlas-workflow-engine",
+        "beacon-operations-console",
+        "northgale-booking-platform",
+        "ledgerline-reconciliation-service"
+      ],
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "port-consortium-interpreter",
+      "role": {"en": "Korean–English Technical Interpreter", "ko": "한영 기술 통역사"},
+      "organization": {
+        "en": "Hanbit–Meridian Joint Engineering Consortium for Smart Port Logistics",
+        "ko": "한빛·메리디언 스마트 항만 물류 공동 엔지니어링 컨소시엄"
+      },
+      "organization_url": "https://port-consortium.example.org",
+      "location": {"en": "Incheon, South Korea", "ko": "대한민국 인천"},
+      "employment_type": "contract",
+      "started_on": "2019-01",
+      "ended_on": "2020-02",
+      "summary": {
+        "en": "Interpreted for engineers from four countries during the rollout of automated cranes and a new terminal operating system: design reviews, factory acceptance tests and daily site meetings.",
+        "ko": "자동화 크레인과 신규 터미널 운영 시스템을 도입하는 동안 4개국 엔지니어를 위해 설계 검토, 공장 인수 시험, 매일 열리는 현장 회의를 통역했습니다."
+      },
+      "highlights": {
+        "en": "- Consecutive interpreting in about 220 technical meetings\n- Built the project glossary, later a 3,200-entry reference",
+        "ko": "- 기술 회의 약 220회 순차 통역\n- 이후 3,200개 항목의 참고 자료가 된 프로젝트 용어집 구축"
+      },
+      "skills": ["korean", "english", "consecutive-interpreting", "technical-translation"],
+      "projects": ["smart-port-terminology-glossary"],
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "brightkeel-backend-intern",
+      "role": {"en": "Backend Developer Intern", "ko": "백엔드 개발 인턴"},
+      "organization": {"en": "Brightkeel Systems", "ko": "브라이트킬 시스템즈"},
+      "organization_url": "https://brightkeel.example.com",
+      "location": {"en": "Seoul, South Korea", "ko": "대한민국 서울"},
+      "employment_type": "internship",
+      "started_on": "2017-07",
+      "ended_on": "2017-12",
+      "summary": {
+        "en": "Six months on the platform team: small internal APIs, tests for legacy code, and my first real code reviews.",
+        "ko": "플랫폼팀에서 6개월 동안 작은 사내 API를 만들고, 레거시 코드에 테스트를 붙이고, 처음으로 제대로 된 코드 리뷰를 받았습니다."
+      },
+      "highlights": {
+        "en": "- Built QuickForm API, later used for internal surveys\n- Raised test coverage of the billing module from 12% to 58%",
+        "ko": "- 사내 설문에 쓰인 퀵폼 API 개발\n- 결제 모듈 테스트 커버리지를 12%에서 58%로 높임"
+      },
+      "skills": ["python", "django", "git"],
+      "projects": ["quickform-api"],
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "language-cafe-volunteer",
+      "role": {"en": "Volunteer Conversation Tutor", "ko": "자원봉사 회화 튜터"},
+      "organization": {"en": "Lantern Street Language Café", "ko": "랜턴 스트리트 랭귀지 카페"},
+      "location": {"en": "Seoul, South Korea", "ko": "대한민국 서울"},
+      "employment_type": "volunteer",
+      "started_on": "2016-03",
+      "ended_on": "2016-12",
+      "summary": {
+        "en": "Weekly English and Korean conversation evenings for newcomers to the neighbourhood.",
+        "ko": "동네에 새로 온 사람들을 위해 매주 영어·한국어 회화 모임을 진행했습니다."
+      },
+      "skills": ["korean", "english"],
+      "sources": ["demo-brief"]
+    }
+  ],
+  "education": [
+    {
+      "key": "lindenhall-computer-science",
+      "institution": {"en": "Lindenhall University", "ko": "린덴홀 대학교"},
+      "credential": {"en": "BSc in Computer Science", "ko": "컴퓨터과학 학사"},
+      "field": {"en": "Computer science", "ko": "컴퓨터과학"},
+      "kind": "degree",
+      "started_on": "2014-03",
+      "ended_on": "2018-02",
+      "description": {
+        "en": "Final-year project: a booking service for the university’s shared laboratories.",
+        "ko": "졸업 프로젝트로 학내 공동 실험실 예약 서비스를 만들었습니다."
+      },
+      "skills": ["python", "postgresql", "linux"],
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "saebyeol-interpreting-program",
+      "institution": {
+        "en": "Saebyeol Institute of Interpretation and Translation",
+        "ko": "새별 통번역 교육원"
+      },
+      "credential": {
+        "en": "Professional Interpreting Program (Korean–English)",
+        "ko": "한영 전문 통역 과정"
+      },
+      "field": {"en": "Consecutive and simultaneous interpreting", "ko": "순차 및 동시 통역"},
+      "kind": "course",
+      "started_on": "2018-03",
+      "ended_on": "2018-12",
+      "description": {
+        "en": "A nine-month evening program: note-taking, sight translation and weekly mock conferences.",
+        "ko": "9개월 과정의 야간 프로그램으로 노트테이킹, 문장 구역, 매주 모의 회의 통역을 훈련했습니다."
+      },
+      "skills": ["consecutive-interpreting", "korean", "english"],
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "hanmaru-korean-exam",
+      "institution": {"en": "Hanmaru Language Assessment Board", "ko": "한마루 언어평가원"},
+      "credential": {"en": "Advanced Korean Proficiency Examination", "ko": "고급 한국어 능력 시험"},
+      "kind": "language_test",
+      "ended_on": "2019-11",
+      "result": {"en": "Level 6 of 6", "ko": "6급 (최고 등급)"},
+      "credential_url": "https://verify.example.org/hanmaru/demo-000000",
+      "skills": ["korean"],
+      "sources": ["demo-brief"]
+    }
+  ],
+  "services": [
+    {
+      "slug": "backend-api-development",
+      "title": {"en": "Backend and API development", "ko": "백엔드·API 개발"},
+      "summary": {
+        "en": "APIs, background jobs and admin tooling for products that have to stay up.",
+        "ko": "멈추지 않아야 하는 서비스를 위한 API, 백그라운드 작업, 관리 도구를 만듭니다."
+      },
+      "description": {
+        "en": "A typical engagement starts with a short written scope, ships in small reviewed steps, and ends with documentation your team can maintain without me.",
+        "ko": "보통 짧은 서면 범위 정의로 시작해 검토 가능한 작은 단위로 개발하고, 제가 없어도 팀이 유지할 수 있는 문서로 마무리합니다."
+      },
+      "pricing_note": {
+        "en": "Quoted per project after a short scoping call",
+        "ko": "짧은 범위 논의 후 프로젝트 단위로 견적"
+      },
+      "skills": ["python", "django", "postgresql", "rest-apis"],
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "technical-translation",
+      "title": {"en": "Korean–English technical translation", "ko": "한영 기술 번역"},
+      "summary": {
+        "en": "Specifications, manuals and software interfaces, in either direction.",
+        "ko": "사양서, 매뉴얼, 소프트웨어 화면을 한국어와 영어 양방향으로 번역합니다."
+      },
+      "pricing_note": {
+        "en": "Per source word; glossary setup included",
+        "ko": "원문 단어 기준, 용어집 구축 포함"
+      },
+      "skills": ["technical-translation", "korean", "english"],
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "meeting-interpreting",
+      "title": {
+        "en": "Consecutive interpreting for meetings and site visits",
+        "ko": "회의·현장 방문 순차 통역"
+      },
+      "summary": {
+        "en": "Design reviews, acceptance tests and negotiations, on site or remote.",
+        "ko": "설계 검토, 인수 시험, 협상 자리를 현장이나 원격으로 통역합니다."
+      },
+      "pricing_note": {
+        "en": "Half-day and full-day rates; travel quoted separately",
+        "ko": "반일·전일 요금, 출장비 별도"
+      },
+      "skills": ["consecutive-interpreting", "korean", "english"],
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "workflow-automation",
+      "title": {"en": "Workflow automation and messaging bots", "ko": "업무 자동화·메시징 봇"},
+      "summary": {
+        "en": "Bots, pipelines and AI features that take repetitive work off a team without taking control away from it.",
+        "ko": "팀의 반복 업무를 덜어 주되, 통제권은 팀에 남겨 두는 봇, 파이프라인, AI 기능을 만듭니다."
+      },
+      "skills": ["workflow-automation", "ai-integration", "python"],
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "subtitle-localization",
+      "title": {"en": "Subtitle localization", "ko": "자막 현지화"},
+      "summary": {
+        "en": "In preparation: Korean and English subtitles for training videos.",
+        "ko": "준비 중: 교육 영상용 한국어·영어 자막."
+      },
+      "skills": ["technical-translation"],
+      "sources": ["demo-brief"]
+    }
+  ],
+  "language_pairs": [
+    {
+      "source": "korean",
+      "target": "english",
+      "modes": ["document", "consecutive", "localization", "review"],
+      "domains": {"en": "Logistics, manufacturing, software and IT", "ko": "물류, 제조, 소프트웨어·IT"},
+      "note": {
+        "en": "The main direction for technical documents and on-site interpreting.",
+        "ko": "기술 문서와 현장 통역에서 주로 맡는 방향입니다."
+      },
+      "sources": ["demo-brief"]
+    },
+    {
+      "source": "english",
+      "target": "korean",
+      "modes": ["document", "consecutive", "review"],
+      "domains": {
+        "en": "Software documentation and user interfaces",
+        "ko": "소프트웨어 문서와 사용자 인터페이스"
+      },
+      "note": {
+        "en": "Published Korean text is reviewed by a native Korean editor.",
+        "ko": "외부에 공개되는 한국어 결과물은 한국어 원어민 편집자가 감수합니다."
+      },
+      "sources": ["demo-brief"]
+    }
+  ],
+  "contact_channels": [
+    {
+      "key": "email",
+      "kind": "email",
+      "label": {"en": "Email", "ko": "이메일"},
+      "handle": "alex.demo@example.com",
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "code",
+      "kind": "github",
+      "label": {"en": "Code", "ko": "코드"},
+      "url": "https://github.example.com/alex-demo",
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "linkedin",
+      "kind": "linkedin",
+      "label": {"en": "LinkedIn"},
+      "url": "https://linkedin.example.com/in/alex-demo",
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "telegram",
+      "kind": "telegram",
+      "label": {"en": "Telegram", "ko": "텔레그램"},
+      "url": "https://telegram.example.com/alex-demo",
+      "sources": ["demo-brief"]
+    },
+    {
+      "key": "kakaotalk",
+      "kind": "kakaotalk",
+      "label": {"en": "KakaoTalk", "ko": "카카오톡"},
+      "url": "https://kakao.example.com/alex-demo",
+      "sources": ["demo-brief"]
+    }
+  ],
+  "profiles": [
+    {
+      "slug": "home",
+      "kind": "home",
+      "name": {"en": "Home", "ko": "홈"},
+      "switcher_label": {"en": "Overview", "ko": "개요"},
+      "headline": {
+        "en": "Backend systems and Korean–English language work, from one person.",
+        "ko": "백엔드 시스템과 한영 언어 작업을 한 사람이 함께합니다."
+      },
+      "subheadline": {
+        "en": "Alex Demo builds dependable services and interprets between Korean and English teams. Everything on this demo site is fictional.",
+        "ko": "알렉스 데모는 믿을 수 있는 서비스를 만들고, 한국어와 영어를 쓰는 팀 사이에서 통역합니다. 이 데모 사이트의 모든 내용은 가상입니다."
+      },
+      "intro": {
+        "en": "Most of my work sits where software meets people who speak different languages: the booking system that has to remind customers in Korean, the port rollout where engineers from four countries need to agree on what an alarm means.\n\nPick the side you came for below.",
+        "ko": "제 일은 대부분 소프트웨어와 서로 다른 언어를 쓰는 사람들이 만나는 곳에 있습니다. 고객에게 한국어로 알림을 보내야 하는 예약 시스템, 4개국 엔지니어가 경보 하나의 의미를 합의해야 하는 항만 자동화 현장 같은 곳입니다.\n\n아래에서 관심 있는 쪽을 골라 주세요."
+      },
+      "hero_variant": "portrait",
+      "languages": ["en", "ko"],
+      "primary_cta": "projects",
+      "primary_cta_label": {"en": "See the work", "ko": "작업 보기"},
+      "sections": [
+        {"type": "profile_router", "heading": {"en": "Where should we start?", "ko": "어디서부터 시작할까요?"}},
+        {"type": "evidence_strip"},
+        {
+          "type": "projects",
+          "heading": {"en": "Selected work", "ko": "주요 작업"},
+          "item_limit": 3,
+          "anchor": "work"
+        },
+        {"type": "contact", "heading": {"en": "Get in touch", "ko": "연락하기"}}
+      ],
+      "projects": [
+        {"slug": "atlas-workflow-engine", "is_featured": true},
+        {"slug": "hanbridge-localization-hub", "is_featured": true},
+        {"slug": "contextdesk-ai-assistant", "is_featured": true},
+        {"slug": "relaybot-operations-platform"}
+      ],
+      "contact_channels": [{"key": "email", "is_primary": true}, {"key": "code"}],
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "about",
+      "kind": "about",
+      "name": {"en": "About", "ko": "소개"},
+      "switcher_label": {"en": "About", "ko": "소개"},
+      "headline": {
+        "en": "Engineer by training, interpreter by practice, and usually both in the same week.",
+        "ko": "공학을 전공하고 통역으로 경력을 쌓았으며, 대개 한 주 안에 두 가지 일을 모두 합니다."
+      },
+      "subheadline": {
+        "en": "Based in Seoul. Writing code since 2014, interpreting since 2019.",
+        "ko": "서울에서 활동합니다. 2014년부터 코드를 쓰고, 2019년부터 통역을 하고 있습니다."
+      },
+      "intro": {
+        "en": "I studied computer science, then spent two years training as an interpreter and interpreting on a port automation project before going back to writing code full time. The detour turned out to be the most useful thing I have done: I learned how often a project fails on a misunderstood word rather than a bug.\n\nThese days I split my time between backend and automation work and technical interpreting. The two feed each other. Interpreting taught me to ask what people actually need; engineering taught me to write it down precisely.",
+        "ko": "컴퓨터과학을 전공한 뒤, 다시 개발자로 돌아오기 전까지 2년 동안 통역을 배우고 항만 자동화 프로젝트에서 통역을 했습니다. 돌아보면 그 우회로가 가장 쓸모 있는 경험이었습니다. 프로젝트가 버그가 아니라 잘못 이해한 단어 하나 때문에 흔들리는 일이 얼마나 잦은지 배웠기 때문입니다.\n\n요즘은 백엔드·자동화 개발과 기술 통역을 함께 하고 있습니다. 두 일은 서로를 돕습니다. 통역을 하며 사람들이 정말로 필요로 하는 것이 무엇인지 묻는 법을 배웠고, 개발을 하며 그것을 정확하게 글로 남기는 법을 배웠습니다."
+      },
+      "router_prompt": {"en": "Tell me who you are first", "ko": "먼저 어떤 사람인지 알고 싶어요"},
+      "router_blurb": {
+        "en": "Background, languages, and the path from interpreting to engineering.",
+        "ko": "배경, 사용 언어, 그리고 통역에서 개발로 이어진 길."
+      },
+      "hero_variant": "portrait",
+      "languages": ["en", "ko"],
+      "primary_cta": "resume",
+      "primary_cta_label": {"en": "Download CV", "ko": "이력서 받기"},
+      "sections": [
+        {"type": "about", "heading": {"en": "About Alex", "ko": "알렉스 소개"}},
+        {
+          "type": "custom_markdown",
+          "heading": {"en": "How I work", "ko": "일하는 방식"},
+          "body": {
+            "en": "- **Written scope first.** A page that says what is in and what is out saves a week of rework.\n- **Small, reviewed steps.** Every change is something a colleague could review in ten minutes.\n- **Glossary before translation.** Terms are agreed with the client before the first page is translated.",
+            "ko": "- **범위부터 글로 정리합니다.** 무엇을 하고 무엇을 하지 않는지 적은 한 쪽이 일주일의 재작업을 줄입니다.\n- **작게 나누어 검토받습니다.** 모든 변경은 동료가 10분 안에 검토할 수 있는 크기로 만듭니다.\n- **번역 전에 용어집을 먼저 만듭니다.** 첫 페이지를 옮기기 전에 고객과 용어를 합의합니다."
+          }
+        },
+        {"type": "experience", "heading": {"en": "Experience", "ko": "경력"}},
+        {"type": "education", "heading": {"en": "Education and credentials", "ko": "학력·자격"}},
+        {"type": "skills", "heading": {"en": "Skills and languages", "ko": "기술·언어"}, "item_limit": 8},
+        {"type": "contact", "heading": {"en": "Contact", "ko": "연락처"}}
+      ],
+      "experience": [
+        "cobaltine-automation-engineer",
+        "northgale-backend-developer",
+        "port-consortium-interpreter",
+        "brightkeel-backend-intern",
+        "language-cafe-volunteer"
+      ],
+      "education": [
+        "lindenhall-computer-science",
+        "saebyeol-interpreting-program",
+        "hanmaru-korean-exam"
+      ],
+      "skills": [
+        {"slug": "korean", "is_primary": true},
+        {"slug": "english", "is_primary": true},
+        {"slug": "python", "is_primary": true},
+        {"slug": "django"},
+        {"slug": "postgresql"},
+        {"slug": "workflow-automation"},
+        {"slug": "technical-translation"},
+        {"slug": "consecutive-interpreting"}
+      ],
+      "contact_channels": [{"key": "email", "is_primary": true}, {"key": "linkedin"}],
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "developer",
+      "kind": "role",
+      "name": {"en": "Backend Developer", "ko": "백엔드 개발자"},
+      "switcher_label": {"en": "Developer", "ko": "개발"},
+      "headline": {
+        "en": "Backend developer for APIs, background jobs and the tooling that keeps products running.",
+        "ko": "API와 백그라운드 작업, 그리고 서비스를 멈추지 않게 하는 운영 도구를 만드는 백엔드 개발자."
+      },
+      "subheadline": {
+        "en": "Python and Django since a first internship in 2017, up to leading the backend of a booking platform used by about 60 businesses.",
+        "ko": "2017년 첫 인턴십부터 업체 약 60곳이 쓰는 예약 플랫폼의 백엔드 리드까지, Python과 Django로 일해 왔습니다."
+      },
+      "intro": {
+        "en": "I like the unglamorous parts of backend work: the job queue nobody thinks about until it stops, the admin screen that saves support an hour a day, the database constraint that makes a whole class of bugs impossible.\n\nMost of my projects are Django and PostgreSQL, with Redis where a queue is needed and Docker everywhere.",
+        "ko": "저는 백엔드 일 중에서도 눈에 잘 띄지 않는 부분을 좋아합니다. 멈추기 전까지는 아무도 신경 쓰지 않는 작업 대기열, 고객지원팀의 하루 한 시간을 아껴 주는 관리 화면, 버그 한 부류를 아예 불가능하게 만드는 데이터베이스 제약 조건 같은 것들입니다.\n\n대부분의 프로젝트는 Django와 PostgreSQL로 만들고, 대기열이 필요하면 Redis를, 배포에는 언제나 Docker를 씁니다."
+      },
+      "router_prompt": {"en": "I need something built or fixed", "ko": "개발이나 개선이 필요해요"},
+      "router_blurb": {
+        "en": "APIs, background jobs, data pipelines and admin tools.",
+        "ko": "API, 백그라운드 작업, 데이터 파이프라인, 관리 도구."
+      },
+      "hero_variant": "split",
+      "languages": ["en", "ko"],
+      "primary_cta": "contact",
+      "primary_cta_label": {"en": "Start a project", "ko": "프로젝트 문의하기"},
+      "contact_form_variant": "project_inquiry",
+      "sections": [
+        {"type": "about"},
+        {"type": "evidence_strip"},
+        {
+          "type": "projects",
+          "heading": {"en": "Selected projects", "ko": "주요 프로젝트"},
+          "item_limit": 6,
+          "anchor": "projects"
+        },
+        {"type": "skills", "heading": {"en": "Stack", "ko": "기술 스택"}},
+        {"type": "experience", "heading": {"en": "Experience", "ko": "경력"}},
+        {"type": "education", "heading": {"en": "Education", "ko": "학력"}},
+        {"type": "services", "heading": {"en": "How I can help", "ko": "도울 수 있는 일"}},
+        {"type": "resume_cta", "heading": {"en": "CV", "ko": "이력서"}, "is_enabled": false},
+        {"type": "contact", "heading": {"en": "Start a project", "ko": "프로젝트 문의"}}
+      ],
+      "projects": [
+        {"slug": "atlas-workflow-engine", "is_featured": true, "is_primary": true},
+        {"slug": "northgale-booking-platform", "is_featured": true, "is_primary": true},
+        {"slug": "relaybot-operations-platform"},
+        {"slug": "contextdesk-ai-assistant"},
+        {"slug": "beacon-operations-console", "is_primary": true},
+        {"slug": "hanbridge-localization-hub"},
+        {"slug": "quickform-api", "is_primary": true},
+        {"slug": "pulsetrack-clinical-data-prototype", "is_primary": true},
+        {"slug": "ledgerline-reconciliation-service", "is_primary": true}
+      ],
+      "skills": [
+        {"slug": "python", "is_primary": true},
+        {"slug": "django", "is_primary": true},
+        {"slug": "postgresql", "is_primary": true},
+        {"slug": "rest-apis"},
+        {"slug": "redis"},
+        {"slug": "docker"},
+        {"slug": "linux"},
+        {"slug": "git"},
+        {"slug": "rust"}
+      ],
+      "experience": [
+        "cobaltine-automation-engineer",
+        "northgale-backend-developer",
+        "brightkeel-backend-intern"
+      ],
+      "education": ["lindenhall-computer-science"],
+      "services": ["backend-api-development"],
+      "contact_channels": [
+        {"key": "email", "is_primary": true},
+        {"key": "code"},
+        {"key": "linkedin"}
+      ],
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "translator",
+      "kind": "role",
+      "name": {"en": "Korean Translator and Interpreter", "ko": "한영 번역가·통역사"},
+      "switcher_label": {"en": "Translator", "ko": "번역·통역"},
+      "headline": {
+        "en": "Korean–English interpreting and technical translation for engineering teams.",
+        "ko": "엔지니어링 팀을 위한 한영 통역과 기술 번역."
+      },
+      "subheadline": {
+        "en": "Factory floors, design reviews and software releases: work where accuracy matters more than eloquence.",
+        "ko": "공장 현장, 설계 검토, 소프트웨어 출시처럼 화려한 문장보다 정확성이 중요한 곳에서 일합니다."
+      },
+      "intro": {
+        "en": "I translate and interpret between Korean and English for teams that build things. Most requests involve specifications, acceptance tests or software interfaces, where a wrong term costs more than an awkward sentence.\n\nEvery project starts with a glossary agreed with you, and ends with that glossary handed back for your next project.",
+        "ko": "무언가를 만드는 팀을 위해 한국어와 영어 사이의 번역과 통역을 합니다. 요청의 대부분은 사양서, 인수 시험, 소프트웨어 화면처럼, 어색한 문장보다 잘못된 용어 하나가 더 큰 비용을 치르게 하는 일입니다.\n\n모든 프로젝트는 고객과 합의한 용어집으로 시작하고, 그 용어집을 다음 프로젝트에 쓰실 수 있도록 넘겨 드리는 것으로 끝납니다."
+      },
+      "router_prompt": {
+        "en": "I need Korean and English to line up",
+        "ko": "한국어와 영어를 정확하게 옮겨야 해요"
+      },
+      "router_blurb": {
+        "en": "Technical translation, on-site interpreting and terminology work.",
+        "ko": "기술 번역, 현장 통역, 용어 관리."
+      },
+      "hero_variant": "bilingual",
+      "hero_image": "hero-translator",
+      "languages": ["en", "ko"],
+      "primary_cta": "contact",
+      "primary_cta_label": {"en": "Request a quote", "ko": "견적 요청하기"},
+      "contact_form_variant": "language_request",
+      "sections": [
+        {"type": "about"},
+        {
+          "type": "language_pairs",
+          "heading": {"en": "Language pairs", "ko": "언어 조합"},
+          "anchor": "languages"
+        },
+        {"type": "services", "heading": {"en": "Services", "ko": "서비스"}},
+        {
+          "type": "projects",
+          "heading": {"en": "Terminology and localization work", "ko": "용어·현지화 작업"}
+        },
+        {"type": "experience", "heading": {"en": "Experience", "ko": "경력"}},
+        {"type": "education", "heading": {"en": "Training and credentials", "ko": "교육·자격"}},
+        {
+          "type": "custom_markdown",
+          "heading": {"en": "Glossary samples", "ko": "용어집 샘플"},
+          "body": {
+            "en": "Samples will appear here once client agreements allow them to be shared.",
+            "ko": "고객사 동의를 받는 대로 이곳에 샘플을 공개할 예정입니다."
+          },
+          "is_enabled": false
+        },
+        {"type": "contact", "heading": {"en": "Request a quote", "ko": "견적 요청"}}
+      ],
+      "projects": [
+        {"slug": "hanbridge-localization-hub", "is_featured": true, "is_primary": true},
+        {"slug": "smart-port-terminology-glossary", "is_featured": true, "is_primary": true},
+        {"slug": "northgale-booking-platform"}
+      ],
+      "skills": [
+        {"slug": "korean", "is_primary": true},
+        {"slug": "english", "is_primary": true},
+        {"slug": "technical-translation", "is_primary": true},
+        {"slug": "consecutive-interpreting", "is_primary": true}
+      ],
+      "experience": [
+        "port-consortium-interpreter",
+        "cobaltine-automation-engineer",
+        "language-cafe-volunteer"
+      ],
+      "education": ["saebyeol-interpreting-program", "hanmaru-korean-exam"],
+      "services": ["technical-translation", "meeting-interpreting", "subtitle-localization"],
+      "contact_channels": [
+        {"key": "email", "is_primary": true},
+        {"key": "telegram"},
+        {"key": "kakaotalk"}
+      ],
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "ai-automation",
+      "kind": "role",
+      "name": {"en": "AI and Automation"},
+      "switcher_label": {"en": "Automation"},
+      "headline": {
+        "en": "Automation that removes busywork, and AI features that know when to hand over to a person."
+      },
+      "subheadline": {
+        "en": "Messaging bots, data pipelines and document assistants, built with the same care as any other backend."
+      },
+      "intro": {
+        "en": "Automation is worth building when it takes repetitive work off a team without taking control away from it. Every bot or pipeline I build can explain what it did, and every AI feature has a clear path to a person.\n\nThis profile is newer, and English-only for now."
+      },
+      "router_prompt": {"en": "I want to automate something"},
+      "router_blurb": {"en": "Bots, pipelines and careful AI integrations."},
+      "hero_variant": "statement",
+      "languages": ["en"],
+      "show_in_router": false,
+      "primary_cta": "contact",
+      "primary_cta_label": {"en": "Discuss an automation"},
+      "contact_form_variant": "project_inquiry",
+      "sections": [
+        {"type": "about"},
+        {"type": "projects", "heading": {"en": "Automation projects"}},
+        {"type": "skills", "heading": {"en": "Tools"}},
+        {"type": "services", "heading": {"en": "Services"}},
+        {"type": "experience", "heading": {"en": "Experience"}},
+        {"type": "contact", "heading": {"en": "Discuss an automation"}}
+      ],
+      "projects": [
+        {"slug": "contextdesk-ai-assistant", "is_featured": true, "is_primary": true},
+        {"slug": "signalflow-data-pipeline", "is_featured": true, "is_primary": true},
+        {"slug": "relaybot-operations-platform", "is_primary": true},
+        {"slug": "hanbridge-localization-hub"}
+      ],
+      "skills": [
+        {"slug": "workflow-automation", "is_primary": true},
+        {"slug": "ai-integration", "is_primary": true},
+        {"slug": "python"},
+        {"slug": "redis"},
+        {"slug": "docker"},
+        {"slug": "postgresql"}
+      ],
+      "experience": ["cobaltine-automation-engineer"],
+      "services": ["workflow-automation"],
+      "contact_channels": [{"key": "email", "is_primary": true}, {"key": "telegram"}],
+      "sources": ["demo-brief"]
+    },
+    {
+      "slug": "technical-writer",
+      "kind": "role",
+      "name": {"en": "Technical Writer", "ko": "테크니컬 라이터"},
+      "intro": {"en": "Documentation, release notes and API guides."},
+      "languages": ["en"],
+      "sections": [{"type": "about"}],
+      "todo": [
+        "decide whether this profile should go live at all; the demo keeps it as an unpublished draft"
+      ],
+      "sources": ["demo-brief"]
+    }
+  ]
+}

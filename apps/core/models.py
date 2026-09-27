@@ -225,16 +225,24 @@ class SiteSettings(TimeStamped):
 # ---------------------------------------------------------------------------
 
 
-class ImportedRecord(models.Model):
-    """Which record `manage.py draft_content` created for which manifest key.
+class ImportOrigin(models.TextChoices):
+    DRAFT = "draft", "draft_content (real content)"
+    DEMO = "demo", "seed_demo (fictional demo content)"
 
-    Provenance only, never content. It lets a re-run find its own drafts even after they were
+
+class ImportedRecord(models.Model):
+    """Which record an import created for which manifest key, and which import it was.
+
+    Provenance only, never content. It lets a re-run find its own records even after they were
     edited, and leave alone the ones that were deliberately deleted (docs/CONTENT_IMPORT.md).
+    `origin` separates real drafts (draft_content) from the fictional demo dataset (seed_demo):
+    the two never share a database, and `seed_demo --reset` removes exactly the demo records.
     """
 
     model_label = models.CharField(max_length=60)
     key = models.CharField(max_length=120)
     object_id = models.PositiveBigIntegerField()
+    origin = models.CharField(max_length=5, choices=ImportOrigin, default=ImportOrigin.DRAFT)
     imported_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -243,7 +251,8 @@ class ImportedRecord(models.Model):
             models.UniqueConstraint(
                 fields=["model_label", "key"], name="core_importedrecord_unique_key"
             ),
+            c.one_of("core_importedrecord_origin_valid", "origin", ImportOrigin),
         ]
 
     def __str__(self):
-        return f"{self.model_label}:{self.key} → #{self.object_id}"
+        return f"{self.model_label}:{self.key} → #{self.object_id} ({self.origin})"

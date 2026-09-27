@@ -188,11 +188,12 @@ class SiteSettingsAdmin(TranslationAdmin):
 
 @admin.register(ImportedRecord)
 class ImportedRecordAdmin(admin.ModelAdmin):
-    """What draft_content created. Read-only; deleting a row lets a later import recreate the
-    record (by default a deleted draft is never recreated)."""
+    """What draft_content (real drafts) or seed_demo (fictional demo content) created.
+    Read-only; deleting a row lets a later import recreate the record (by default a deleted
+    draft is never recreated)."""
 
-    list_display = ("model_label", "key", "object_id", "imported_at")
-    list_filter = ("model_label",)
+    list_display = ("model_label", "key", "object_id", "origin", "imported_at")
+    list_filter = ("origin", "model_label")
     search_fields = ("key",)
 
     def has_add_permission(self, request):

@@ -159,6 +159,11 @@ if not re.fullmatch(r"[a-z0-9][a-z0-9-]*/", ADMIN_URL):
     )
 ADMIN_ENABLED = env.bool("DJANGO_ADMIN_ENABLED", default=True)
 
+# `manage.py seed_demo` fills a database with a published, entirely fictional career
+# (docs/CONTENT_IMPORT.md, "Demo content"). Only the development and test settings allow it, so
+# the demo can never be seeded onto the real site.
+DEMO_CONTENT_ALLOWED = False
+
 # ---------------------------------------------------------------------------
 # Static and media files
 # ---------------------------------------------------------------------------

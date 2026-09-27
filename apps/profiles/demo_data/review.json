@@ -1,0 +1,136 @@
+{
+  "keep_unpublished": {
+    "projects": ["pulsetrack-clinical-data-prototype"],
+    "skills": ["rust"],
+    "experience": ["language-cafe-volunteer"],
+    "services": ["subtitle-localization"],
+    "contact_channels": ["kakaotalk"],
+    "profiles": ["technical-writer"]
+  },
+  "site": {
+    "availability": "limited",
+    "availability_note": {
+      "en": "Taking on one new project from next month",
+      "ko": "다음 달부터 새 프로젝트 한 건을 맡을 수 있습니다"
+    },
+    "response_time_note": {
+      "en": "Usually replies within two working days",
+      "ko": "보통 영업일 기준 이틀 안에 답변합니다"
+    },
+    "seo_title": {
+      "en": "Alex Demo · backend development and Korean–English interpreting",
+      "ko": "알렉스 데모 · 백엔드 개발과 한영 통역"
+    },
+    "seo_description": {
+      "en": "Fictional demo content for developing this site: backend systems, workflow automation and Korean–English language work.",
+      "ko": "이 사이트를 개발하기 위한 가상의 데모 콘텐츠: 백엔드 시스템, 업무 자동화, 한영 언어 작업."
+    },
+    "default_og_image": "og-default"
+  },
+  "projects": {
+    "atlas-workflow-engine": {
+      "is_featured": true,
+      "seo_title": {
+        "en": "Atlas Workflow Engine · job orchestration case study",
+        "ko": "아틀라스 워크플로 엔진 · 작업 오케스트레이션 사례"
+      },
+      "seo_description": {
+        "en": "How a small Django service replaced about 300 cron jobs, with retries, audit trails and per-team quotas. Demo content.",
+        "ko": "작은 Django 서비스가 재시도, 감사 기록, 팀별 할당량으로 크론 작업 약 300개를 대체한 과정. 데모 콘텐츠."
+      },
+      "og_image": "atlas-cover",
+      "gallery": [
+        {
+          "media": "atlas-queue",
+          "caption": {
+            "en": "The queue view: every team sees its own backlog and quota.",
+            "ko": "대기열 화면: 팀마다 자기 적체와 할당량을 봅니다."
+          }
+        },
+        {
+          "media": "atlas-retries",
+          "caption": {
+            "en": "Retry history for a single job, with the back-off between attempts.",
+            "ko": "작업 하나의 재시도 이력과 시도 사이의 백오프 간격."
+          }
+        }
+      ]
+    },
+    "hanbridge-localization-hub": {
+      "is_featured": true,
+      "gallery": [
+        {
+          "media": "hanbridge-review",
+          "caption": {
+            "en": "The review screen: source and target side by side, glossary conflicts flagged.",
+            "ko": "검수 화면: 원문과 번역문을 나란히 두고 용어 충돌을 표시합니다."
+          }
+        }
+      ]
+    },
+    "contextdesk-ai-assistant": {"is_featured": true}
+  },
+  "profiles": {
+    "developer": {
+      "seo_title": {
+        "en": "Alex Demo · backend developer (demo)",
+        "ko": "알렉스 데모 · 백엔드 개발자 (데모)"
+      },
+      "seo_description": {
+        "en": "Fictional demo profile: APIs, background jobs and admin tooling built with Django and PostgreSQL.",
+        "ko": "가상의 데모 프로필: Django와 PostgreSQL로 만든 API, 백그라운드 작업, 관리 도구."
+      },
+      "og_image": "atlas-cover"
+    },
+    "translator": {
+      "seo_title": {
+        "en": "Alex Demo · Korean–English translator and interpreter (demo)",
+        "ko": "알렉스 데모 · 한영 번역가·통역사 (데모)"
+      },
+      "seo_description": {
+        "en": "Fictional demo profile: technical translation and consecutive interpreting between Korean and English.",
+        "ko": "가상의 데모 프로필: 한국어와 영어 사이의 기술 번역과 순차 통역."
+      },
+      "og_image": "hero-translator"
+    }
+  },
+  "links": [
+    {
+      "profile": "translator",
+      "project": "northgale-booking-platform",
+      "summary_override": {
+        "en": "Localized the booking flow and about 40 reminder templates into Korean, and set up the review step every new template goes through.",
+        "ko": "예약 화면과 알림 템플릿 약 40개를 한국어로 현지화하고, 새 템플릿이 반드시 거치는 검수 단계를 만들었습니다."
+      }
+    },
+    {
+      "profile": "ai-automation",
+      "project": "hanbridge-localization-hub",
+      "summary_override": {
+        "en": "The automation side of HanBridge: glossary checks and machine-translation pre-fills that run before a translator starts, and never replace one."
+      }
+    },
+    {
+      "profile": "developer",
+      "experience": "cobaltine-automation-engineer",
+      "highlights_override": {
+        "en": "- Built the Python and Redis backends of RelayBot and SignalFlow\n- Designed the PostgreSQL passage index behind ContextDesk",
+        "ko": "- 릴레이봇과 시그널플로의 Python·Redis 백엔드 개발\n- 컨텍스트데스크의 PostgreSQL 구절 색인 설계"
+      }
+    },
+    {
+      "profile": "translator",
+      "experience": "cobaltine-automation-engineer",
+      "summary_override": {
+        "en": "Alongside the automation work, builds the localization tooling that Cobaltine’s Korean clients use."
+      }
+    },
+    {
+      "profile": "ai-automation",
+      "experience": "cobaltine-automation-engineer",
+      "summary_override": {
+        "en": "Designs bots, pipelines and AI integrations for logistics and healthcare clients, always with a person in the loop."
+      }
+    }
+  ]
+}

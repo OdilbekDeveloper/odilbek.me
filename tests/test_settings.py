@@ -23,6 +23,7 @@ print(json.dumps({
     "staticfiles": s.STORAGES["staticfiles"]["BACKEND"],
     "session_domain": s.SESSION_COOKIE_DOMAIN,
     "admin_enabled": s.ADMIN_ENABLED,
+    "demo_allowed": s.DEMO_CONTENT_ALLOWED,
 }))
 """
 
@@ -52,6 +53,8 @@ def test_production_settings_are_secure(run_with_settings, prod_env):
     assert prod["session_domain"] is None
     # No admin in production until Phase 5 puts it behind allauth with MFA.
     assert prod["admin_enabled"] is False
+    # The fictional demo dataset can never be seeded onto the real site.
+    assert prod["demo_allowed"] is False
 
 
 @pytest.mark.parametrize("missing", ["DJANGO_SECRET_KEY", "DJANGO_ALLOWED_HOSTS", "DATABASE_URL"])
@@ -83,7 +86,8 @@ def test_a_database_other_than_postgresql_is_refused(run_with_settings, prod_env
 def test_development_settings_load(run_with_settings, prod_env):
     code = (
         "import json, django; django.setup(); from django.conf import settings as s; "
-        "print(json.dumps({'debug': s.DEBUG, 'first_app': s.INSTALLED_APPS[0]}))"
+        "print(json.dumps({'debug': s.DEBUG, 'first_app': s.INSTALLED_APPS[0], "
+        "'demo_allowed': s.DEMO_CONTENT_ALLOWED}))"
     )
     env = {"DATABASE_URL": prod_env["DATABASE_URL"]}
     result = run_with_settings("config.settings.dev", code, env)
@@ -92,3 +96,4 @@ def test_development_settings_load(run_with_settings, prod_env):
     assert dev["debug"] is True
     # Must precede django.contrib.staticfiles to take over runserver's static handling.
     assert dev["first_app"] == "whitenoise.runserver_nostatic"
+    assert dev["demo_allowed"] is True

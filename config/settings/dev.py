@@ -14,5 +14,8 @@ SECRET_KEY = env("DJANGO_SECRET_KEY", default="django-insecure-local-development
 
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["localhost", "127.0.0.1", "[::1]"])
 
+# The fictional demo dataset (manage.py seed_demo) may be loaded here, never in production.
+DEMO_CONTENT_ALLOWED = True
+
 # WhiteNoise serves static files under runserver too, so development matches production.
 INSTALLED_APPS = ["whitenoise.runserver_nostatic", *INSTALLED_APPS]

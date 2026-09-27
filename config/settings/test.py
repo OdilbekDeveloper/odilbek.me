@@ -19,6 +19,8 @@ ALLOWED_HOSTS = ["testserver", "localhost"]
 # Argon2 is deliberately slow; tests don't need to pay for it on every created user.
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
+DEMO_CONTENT_ALLOWED = True
+
 # Tests never depend on the cache table that `predeploy` creates.
 CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
 

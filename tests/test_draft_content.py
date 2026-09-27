@@ -137,6 +137,7 @@ def test_everything_imported_is_unpublished(source_root):
     for record in ImportedRecord.objects.all():
         obj = apps.get_model(record.model_label).objects.get(pk=record.object_id)
         assert getattr(obj, "is_published", False) is False, record
+        assert record.origin == "draft", record
 
 
 def test_missing_facts_become_todos_not_guesses(source_root):
@@ -273,3 +274,14 @@ def test_a_hostile_media_file_rejects_the_whole_import(source_root):
 def test_private_sources_must_not_live_in_the_repository_outside_content_import():
     with pytest.raises(ManifestError, match="not the git-ignored"):
         check_root(settings.BASE_DIR / "docs")
+
+
+@pytest.mark.parametrize("args", [(), ("--dry-run",)])
+def test_real_drafts_never_go_into_a_database_holding_the_demo(source_root, args):
+    ImportedRecord.objects.create(
+        model_label="career.project", key="atlas-workflow-engine", object_id=1, origin="demo"
+    )
+    with pytest.raises(CommandError, match="fictional demo dataset"):
+        run(source_root, None, *args)
+    assert not Project.objects.exists()
+    assert not MediaAsset.objects.exists()

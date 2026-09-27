@@ -87,3 +87,12 @@ def test_imported_record_keys_are_unique_per_model():
     ImportedRecord.objects.create(model_label="career.skill", key="x", object_id=1)
     with violates("core_importedrecord_unique_key"):
         ImportedRecord.objects.create(model_label="career.project", key="x", object_id=2)
+
+
+def test_imported_records_say_which_import_made_them():
+    record = ImportedRecord.objects.create(model_label="career.project", key="x", object_id=1)
+    assert record.origin == "draft"
+    with violates("core_importedrecord_origin_valid"):
+        ImportedRecord.objects.create(
+            model_label="career.project", key="y", object_id=2, origin="guess"
+        )
